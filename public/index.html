@@ -20,6 +20,121 @@ button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#f
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
 .room-code{font-size:42px;letter-spacing:7px;font-weight:900;text-align:center;background:#eee9df;border:2px dashed #416b73;border-radius:18px;padding:18px;margin:14px 0;direction:ltr}.copyrow{display:flex;gap:8px;align-items:stretch}.copyrow button{min-width:130px}.copyok{color:#357a55;font-weight:bold;min-height:22px}.battle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.battle-card{background:#fff;border:1px solid #ddd5c8;border-radius:20px;overflow:hidden}.battle-card img{width:100%;aspect-ratio:2/3;object-fit:cover}.battle-body{padding:15px}.scoreline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee5d9}.total-score{font-size:30px;font-weight:900;color:#416b73;margin-top:10px}.champion{background:#e2f0e7;border:2px solid #357a55;border-radius:20px;padding:22px;text-align:center;font-size:28px;font-weight:900}.pick-btn{width:100%;margin-top:8px}.selected{outline:3px solid #416b73}.formula{background:#eee9df;border-radius:14px;padding:13px;margin-top:12px}.final-table{margin-top:16px;overflow:auto}.final-table table{min-width:650px}@media(max-width:800px){.auction{grid-template-columns:1fr}.poster{max-width:290px;margin:auto}.buttons{grid-template-columns:repeat(2,1fr)}}
 </style>
+<style>
+
+/* ===== MAZAD CINEMATIC THEME ===== */
+:root{
+  --gold:#d8b45a; --gold2:#f0d98b; --green:#071b17; --green2:#0d3028;
+  --panel:rgba(12,31,27,.88); --line:rgba(216,180,90,.28); --text:#f7f2e7;
+}
+html,body{min-height:100%;background:#020907!important;color:var(--text)!important}
+body{
+  font-family:Arial,Tahoma,sans-serif!important;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(216,180,90,.20),transparent 32%),
+    radial-gradient(circle at 0% 35%,rgba(15,91,67,.22),transparent 30%),
+    radial-gradient(circle at 100% 60%,rgba(15,91,67,.18),transparent 28%),
+    linear-gradient(135deg,#020907,#071b17 48%,#020907)!important;
+  overflow-x:hidden;
+}
+body:before{
+  content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-1;
+  background:conic-gradient(from 225deg at 50% 0%,transparent 0deg,rgba(240,217,139,.07) 25deg,transparent 48deg,transparent 360deg);
+  animation:mazadLight 10s ease-in-out infinite alternate;
+}
+@keyframes mazadLight{to{transform:rotate(7deg) scale(1.08);opacity:.7}}
+.app,.wrap{max-width:1180px!important}
+.top{border-bottom:1px solid var(--line);padding-bottom:14px}
+.logo,h1,h2,h3,.title{color:#fff!important;text-shadow:0 0 18px rgba(216,180,90,.12)}
+.logo{letter-spacing:1px}
+.badge,.tag,.turn,.formula,.dealvalue{
+  background:linear-gradient(135deg,rgba(216,180,90,.14),rgba(255,255,255,.035))!important;
+  border:1px solid var(--line)!important;color:#f5e8bd!important;
+}
+.card{
+  background:linear-gradient(145deg,rgba(11,37,31,.94),rgba(4,19,16,.91))!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.035)!important;
+  backdrop-filter:blur(12px);
+}
+.muted{color:#b9b5aa!important}
+input,select{
+  background:#071914!important;color:#fff!important;border-color:rgba(216,180,90,.25)!important;
+}
+button{
+  background:linear-gradient(135deg,#b58b35,#e0c06b)!important;color:#10130f!important;
+  box-shadow:0 6px 18px rgba(216,180,90,.16);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 10px 28px rgba(216,180,90,.25)}
+button:active:not(:disabled){transform:translateY(1px)}
+button.danger{background:linear-gradient(135deg,#7e2929,#b64d42)!important;color:#fff!important}
+button.secondary{background:#26352f!important;color:#eee!important}
+.auction{align-items:stretch}
+.poster{
+  box-shadow:0 25px 55px rgba(0,0,0,.55),0 0 0 1px rgba(216,180,90,.25);
+  transform:perspective(900px) rotateY(-1.5deg);
+  transition:transform .45s ease,box-shadow .45s ease;
+}
+.poster:hover{transform:perspective(900px) rotateY(1.5deg) translateY(-3px);box-shadow:0 30px 70px rgba(0,0,0,.65),0 0 35px rgba(216,180,90,.12)}
+.poster:after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(120deg,transparent 25%,rgba(255,255,255,.10) 48%,transparent 62%);
+  transform:translateX(-120%);animation:posterShine 7s ease-in-out infinite;
+}
+@keyframes posterShine{55%,100%{transform:translateX(120%)}}
+.fallback{background:linear-gradient(145deg,#0d3028,#06130f)!important;color:#f3dda2!important}
+.title{font-size:42px!important}
+.rating,.price{color:var(--gold2)!important}
+.timer{
+  color:#fff!important;font-size:58px!important;
+  text-shadow:0 0 20px rgba(240,217,139,.42);
+  animation:timerPulse 1s ease-in-out infinite alternate;
+}
+@keyframes timerPulse{to{transform:scale(1.035);text-shadow:0 0 32px rgba(240,217,139,.72)}}
+.price{font-size:46px!important;text-shadow:0 0 18px rgba(216,180,90,.18)}
+.player,.stat,.award,.metric,.mini,.battle-card{
+  background:rgba(7,25,21,.88)!important;border-color:rgba(216,180,90,.18)!important;color:#eee!important;
+}
+.player.turn{border-color:#d8b45a!important;box-shadow:0 0 22px rgba(216,180,90,.10)}
+.player.leader{border-color:#4caf7d!important}
+.room-code{
+  background:rgba(216,180,90,.07)!important;border-color:var(--gold)!important;color:#f3dda2!important;
+}
+#dealOverlay{
+  background:rgba(0,8,6,.86)!important;backdrop-filter:blur(9px);
+}
+.dealbox{
+  background:linear-gradient(145deg,#0d3028,#061713)!important;
+  border:1px solid var(--gold)!important;
+  box-shadow:0 0 70px rgba(216,180,90,.16),0 30px 80px rgba(0,0,0,.65)!important;
+  animation:dealIn .35s ease-out;
+}
+@keyframes dealIn{from{opacity:0;transform:scale(.92) translateY(15px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.dealprice{color:var(--gold2)!important}
+.excellent,.good,.win,.bad,.terrible{
+  background:rgba(216,180,90,.10)!important;border:1px solid rgba(216,180,90,.22)!important;
+}
+.champion{
+  background:linear-gradient(135deg,rgba(216,180,90,.16),rgba(9,45,36,.85))!important;
+  border-color:var(--gold)!important;color:#fff!important;
+  box-shadow:0 0 35px rgba(216,180,90,.12);
+}
+.total-score{color:var(--gold2)!important}
+.selected{outline-color:var(--gold)!important}
+#log{scrollbar-color:#a88339 #071914}
+hr{border-color:rgba(216,180,90,.16)!important}
+@media(max-width:800px){
+  .title{font-size:30px!important}.timer{font-size:48px!important}.price{font-size:36px!important}
+  .poster{transform:none!important}.card{padding:16px!important;border-radius:18px!important}
+}
+/* subtle film grain */
+body:after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+}
+
+</style>
 </head>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#eee9df;color:#252622;font-family:Arial,Tahoma,sans-serif}.app{max-width:1120px;margin:auto;padding:22px 18px 60px}
@@ -93,4 +208,17 @@ $('dealNext').onclick=()=>{ $('dealOverlay').style.display='none';dealShown=fals
 function showDeal(d){dealShown=true;$('dealHeading').textContent=d.sold?'تمت الصفقة 🔨':'لم يتم بيع الفيلم';$('dealName').textContent=d.sold?d.film+' — '+d.player:d.film;$('dealPrice').textContent=d.sold?d.price+' د.ك':'لم يُبع';$('dealValue').textContent=d.value+' د.ك';$('dealDiff').textContent=d.diffText||'';$('dealVerdict').textContent=d.verdict||'لا صفقة';$('dealNote').textContent=d.note||'';$('dealOverlay').style.display='flex';}
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
 function renderFinal(){const ranked=state.finalRanked||[];$('battleCards').innerHTML=ranked.map((x,i)=>`<div class="battle-card"><img src="${x.film.img}" onerror="this.style.display='none'"><div class="battle-body"><h2>${i===0?'🥇 ':''}${esc(x.player)}</h2><h3>${esc(x.film.name)}</h3><div class="scoreline"><span>🌍 الشهرة</span><b>${x.fame}/100</b></div><div class="scoreline"><span>⭐ التقييم</span><b>${x.film.rating}/10</b></div><div class="scoreline"><span>🏆 الجوائز</span><b>${x.awards}</b></div><div class="muted" style="margin-top:8px">${esc(x.awardText)}</div><div class="total-score">${x.total.toFixed(1)} نقطة</div></div></div>`).join('');if(ranked[0])$('champion').innerHTML=`🏆 الفائز بالمواجهة الأخيرة<br><span style="font-size:22px">${esc(ranked[0].player)} — ${esc(ranked[0].film.name)}</span><div class="formula">النتيجة: <b>${ranked[0].total.toFixed(1)}</b> نقطة<br>الشهرة 45% + التقييم 35% + الجوائز والترشيحات 20%</div>`;$('battleDetails').innerHTML=`<div class="final-table"><table><tr><th>الترتيب</th><th>اللاعب</th><th>الفيلم</th><th>الشهرة</th><th>التقييم</th><th>الجوائز</th><th>النقاط</th></tr>${ranked.map((x,i)=>`<tr><td>${i+1}</td><td><b>${esc(x.player)}</b></td><td>${esc(x.film.name)}</td><td>${x.fame}</td><td>${x.film.rating}</td><td>${x.awards}</td><td><b>${x.total.toFixed(1)}</b></td></tr>`).join('')}</table></div>`;}
-</script></body></html>
+</script>
+<script>
+/* Cinematic UI micro-effects — visual only, no game logic changes */
+document.addEventListener('click', function(e){
+  const b=e.target.closest('button');
+  if(!b || b.disabled) return;
+  b.animate([
+    {boxShadow:'0 0 0 0 rgba(216,180,90,.45)'},
+    {boxShadow:'0 0 0 12px rgba(216,180,90,0)'}
+  ],{duration:420,easing:'ease-out'});
+});
+</script>
+
+</body></html>
