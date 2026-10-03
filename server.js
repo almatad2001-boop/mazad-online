@@ -206,7 +206,15 @@ socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
 socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
 if(socket) socket.on('errorMsg',m=>setStatus(m));
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
-socket.on('state',s=>{state=s;renderState();});
+socket.on('state',s=>{
+  state=s;
+  if(s && s.phase==='auction'){
+    clearInterval(localTimer);
+    $('dealOverlay').style.display='none';
+    dealShown=false;
+  }
+  renderState();
+});
 socket.on('roundStarted',d=>{
   clearInterval(localTimer);
   $('dealOverlay').style.display='none';
@@ -260,7 +268,7 @@ $('dealDiff').textContent=d.diffText||'';
 $('dealVerdict').textContent=d.verdict||'لا صفقة';
 $('dealNote').textContent=d.note||'';
 $('dealNext').disabled=!isHost;
-$('dealNext').textContent=isHost?'التالي — بدء الجولة التالية':'بانتظار بدء الجولة التالية...';
+$('dealNext').textContent=isHost?'التالي — بدء الجولة التالية':'انتظر المضيف...';
 $('dealOverlay').style.display='flex';
 }
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
