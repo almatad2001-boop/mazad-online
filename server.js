@@ -14,6 +14,66 @@ const films=[
 ['Gladiator',2000,8.5,78,'ملحمي • أكشن','عادي','common','https://image.tmdb.org/t/p/w500/ty8TnY2K0rQxazBM5J7x5Jw9b1L.jpg'],
 ['The Matrix',1999,8.7,86,'خيال علمي • أكشن','نادر','rare','https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg']
 ].map(x=>({name:x[0],year:x[1],rating:x[2],baseValue:x[3],genre:x[4],rarity:x[5],rarityClass:x[6],img:x[7]}));
+// إضافة أكثر من 100 فيلم إضافي
+const extraTitles = [
+'Pulp Fiction','The Shawshank Redemption','The Lord of the Rings: The Return of the King',
+'The Lord of the Rings: The Fellowship of the Ring','The Lord of the Rings: The Two Towers',
+'The Dark Knight Rises','The Prestige','Django Unchained','The Departed','Whiplash',
+'Parasite','Joker','Avengers: Endgame','Avengers: Infinity War','Iron Man',
+'Captain America: The Winter Soldier','Guardians of the Galaxy','Thor: Ragnarok',
+'Spider-Man: No Way Home','Spider-Man: Into the Spider-Verse','Logan','Deadpool',
+'Deadpool 2','Black Panther','Doctor Strange','The Batman','Batman Begins',
+'Man of Steel','Wonder Woman','Aquaman','Mission: Impossible - Fallout',
+'Mission: Impossible - Dead Reckoning','Top Gun: Maverick','John Wick',
+'John Wick: Chapter 2','John Wick: Chapter 3','John Wick: Chapter 4',
+'Mad Max: Fury Road','Furiosa','The Revenant','Dune','Dune: Part Two',
+'Blade Runner 2049','Arrival','Alien','Aliens','Terminator 2: Judgment Day',
+'Terminator','Jurassic Park','Jurassic World','Jaws','Titanic',
+'Avatar','Avatar: The Way of Water','The Wolf of Wall Street','Goodfellas',
+'Casino','Scarface','Heat','Se7en','Zodiac','Gone Girl','Prisoners',
+'No Country for Old Men','There Will Be Blood','The Green Mile',
+'Saving Private Ryan','Schindler’s List','Gladiator II','Braveheart',
+'300','Troy','Kingdom of Heaven','The Last Samurai','Apocalypto',
+'Pirates of the Caribbean: The Curse of the Black Pearl','Pirates of the Caribbean: Dead Man’s Chest',
+'The Hunger Games','Harry Potter and the Philosopher’s Stone',
+'Harry Potter and the Deathly Hallows: Part 2','Fantastic Beasts',
+'The Lion King','Toy Story','Toy Story 3','Up','WALL-E','Coco',
+'Finding Nemo','Ratatouille','Inside Out','Inside Out 2','Shrek',
+'Shrek 2','Kung Fu Panda','How to Train Your Dragon','The Incredibles',
+'The Incredibles 2','Monsters, Inc.','Spider-Man','Spider-Man 2',
+'Spider-Man 3','The Amazing Spider-Man','The Amazing Spider-Man 2',
+'The Sixth Sense','A Beautiful Mind','The Social Network','Oppenheimer',
+'Barbie','La La Land','The Truman Show','Eternal Sunshine of the Spotless Mind',
+'The Grand Budapest Hotel','Her','Drive','Nightcrawler','Black Swan',
+'The Silence of the Lambs','American Psycho','Memento','Oldboy',
+'City of God','Amélie','Cinema Paradiso','The Pianist','1917',
+'All Quiet on the Western Front','Ford v Ferrari','Moneyball','Rocky',
+'Creed','Warrior','The Fighter','The Karate Kid','The Blind Side'
+];
+
+extraTitles.forEach((name,i)=>{
+  const year=1980+(i%45);
+  const rating=Math.round((7.2+(i%18)*0.1)*10)/10;
+  const baseValue=40+((i*10)%91)*10;
+  const fame=70+(i%31);
+  const awards=i%9;
+  films.push({
+    id:'extra-'+i,
+    name,
+    year,
+    rating,
+    baseValue,
+    genre:'فيلم',
+    rarity:rating>=8.5?'نادر':rating>=8?'مميز':'عادي',
+    rarityClass:rating>=8.5?'rare':rating>=8?'special':'common',
+    img:''
+  });
+});
+
+// إعطاء ID ثابت للأفلام الأصلية أيضًا
+films.forEach((f,i)=>{
+  if(!f.id) f.id='film-'+i;
+});
 const cinema={'The Dark Knight':{fame:99,awards:3,awardText:'فاز بأوسكار + 8 ترشيحات'},'Inception':{fame:97,awards:5,awardText:'4 أوسكارات + 8 ترشيحات'},'Interstellar':{fame:96,awards:1,awardText:'أوسكار + 5 ترشيحات'},'The Godfather':{fame:100,awards:6,awardText:'3 أوسكارات + 7 ترشيحات'},'Fight Club':{fame:94,awards:0,awardText:'ترشيحات وجوائز نقدية دون أوسكار'},'Forrest Gump':{fame:99,awards:8,awardText:'6 أوسكارات + 13 ترشيحًا'},'Gladiator':{fame:98,awards:6,awardText:'5 أوسكارات + 12 ترشيحًا'},'The Matrix':{fame:99,awards:5,awardText:'4 أوسكارات + جوائز تقنية متعددة'}};
 const rooms=new Map(); function code(){let s;do{s='MZ'+Math.floor(1000+Math.random()*9000)}while(rooms.has(s));return s}
 function pub(r){return {phase:r.phase,players:r.players.map(p=>({id:p.id,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked}};
