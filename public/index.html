@@ -14,7 +14,6 @@ button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#f
 .buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
 .rarity{font-weight:900}.common{color:#777}.special{color:#416b73}.rare{color:#a86c24}.legendary{color:#9a6a13}
 .log{max-height:220px;overflow:auto}.logrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px 0;border-bottom:1px solid #ddd5c8}
-#dealOverlay{position:fixed;inset:0;background:#182021aa;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}.dealbox{width:min(650px,100%);background:#fbf8f1;border-radius:25px;padding:25px;text-align:center}.dealname{font-size:29px;font-weight:900}.dealprice{font-size:40px;color:#416b73;font-weight:900}.dealvalue{background:#eee9df;padding:13px;border-radius:14px;margin:12px 0}.verdict{padding:13px;border-radius:14px;font-size:23px;font-weight:900;margin:12px 0}.excellent{background:#e2f0e7;color:#357a55}.good{background:#e4eeee;color:#416b73}.win{background:#edf0e8;color:#667443}.bad{background:#f5e8d5;color:#a86c24}.terrible{background:#f5dfdc;color:#a94d43}
 .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.stat{padding:16px;background:#fff;border:1px solid #ddd5c8;border-radius:17px}.stat b{display:block;font-size:24px;margin-top:5px}
 .awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.award{background:#fff;border:1px solid #ddd5c8;border-radius:18px;padding:16px}.award .emoji{font-size:30px}.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.metric{background:#fff;border:1px solid #ddd5c8;border-radius:16px;padding:14px}.metric b{font-size:23px;display:block;margin-top:4px}
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
@@ -24,7 +23,6 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 #auctionAwards .award{min-height:130px;display:flex;flex-direction:column;justify-content:center}
 #auctionAwards .award strong{font-size:20px;color:#f0d98b}
 #auctionAwards .award small{color:#b9b5aa;margin-top:7px}
-#dealNext:disabled{opacity:.65;cursor:wait}
 
 </style>
 <style>
@@ -107,21 +105,7 @@ button.secondary{background:#26352f!important;color:#eee!important}
 .player.leader{border-color:#4caf7d!important}
 .room-code{
   background:rgba(216,180,90,.07)!important;border-color:var(--gold)!important;color:#f3dda2!important;
-}
-#dealOverlay{
-  background:rgba(0,8,6,.86)!important;backdrop-filter:blur(9px);
-}
-.dealbox{
-  background:linear-gradient(145deg,#0d3028,#061713)!important;
-  border:1px solid var(--gold)!important;
-  box-shadow:0 0 70px rgba(216,180,90,.16),0 30px 80px rgba(0,0,0,.65)!important;
-  animation:dealIn .35s ease-out;
-}
-@keyframes dealIn{from{opacity:0;transform:scale(.92) translateY(15px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.dealprice{color:var(--gold2)!important}
-.excellent,.good,.win,.bad,.terrible{
-  background:rgba(216,180,90,.10)!important;border:1px solid rgba(216,180,90,.22)!important;
-}
+}to{opacity:1;transform:scale(1) translateY(0)}}
 .champion{
   background:linear-gradient(135deg,rgba(216,180,90,.16),rgba(9,45,36,.85))!important;
   border-color:var(--gold)!important;color:#fff!important;
@@ -154,7 +138,6 @@ button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#f
 .buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
 .rarity{font-weight:900}.common{color:#777}.special{color:#416b73}.rare{color:#a86c24}.legendary{color:#9a6a13}
 .log{max-height:220px;overflow:auto}.logrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px 0;border-bottom:1px solid #ddd5c8}
-#dealOverlay{position:fixed;inset:0;background:#182021aa;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}.dealbox{width:min(650px,100%);background:#fbf8f1;border-radius:25px;padding:25px;text-align:center}.dealname{font-size:29px;font-weight:900}.dealprice{font-size:40px;color:#416b73;font-weight:900}.dealvalue{background:#eee9df;padding:13px;border-radius:14px;margin:12px 0}.verdict{padding:13px;border-radius:14px;font-size:23px;font-weight:900;margin:12px 0}.excellent{background:#e2f0e7;color:#357a55}.good{background:#e4eeee;color:#416b73}.win{background:#edf0e8;color:#667443}.bad{background:#f5e8d5;color:#a86c24}.terrible{background:#f5dfdc;color:#a94d43}
 .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.stat{padding:16px;background:#fff;border:1px solid #ddd5c8;border-radius:17px}.stat b{display:block;font-size:24px;margin-top:5px}
 .awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.award{background:#fff;border:1px solid #ddd5c8;border-radius:18px;padding:16px}.award .emoji{font-size:30px}.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.metric{background:#fff;border:1px solid #ddd5c8;border-radius:16px;padding:14px}.metric b{font-size:23px;display:block;margin-top:4px}
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
@@ -182,20 +165,18 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 </section>
 
 <section id="selection" class="hidden"><div class="card"><h1>🔥 المواجهة الأخيرة</h1><p class="muted">كل لاعب يحتفظ بكل أفلامه ويختار فيلمًا واحدًا فقط للمواجهة.</p><div id="selectionPlayer" class="turn"></div><div id="selectionMovies" class="collection"></div><div id="selectionWait" class="muted"></div></div></section>
-<section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">كل لاعب يختار فيلمًا واحدًا، ثم تتم المقارنة بطريقة سهلة وواضحة.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div></div><div class="card"><h2>🏅 ألقاب المزاد</h2><div id="auctionAwards" class="awards"></div></div></section>
+<section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">كل لاعب يختار فيلمًا واحدًا، ثم تتم المقارنة بطريقة سهلة وواضحة.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div></div><div class="card"><h2>🏅 نتائج المزاد</h2><div id="auctionAwards" class="awards"></div></div></section>
 </div>
-<div id="dealOverlay"><div class="dealbox"><h2 id="dealHeading">تمت الصفقة 🔨</h2><div id="dealName" class="dealname"></div><div id="dealPrice" class="dealprice"></div><div class="dealvalue">القيمة الحقيقية: <b id="dealValue"></b><br><span id="dealDiff"></span></div><div id="dealVerdict" class="verdict"></div><div id="dealNote"></div><br><button id="dealNext">التالي</button></div></div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = (typeof io==='function') ? io({transports:['websocket','polling']}) : null;
 const $=id=>document.getElementById(id);
-let room='',me='',isHost=false,state=null,localTimer=null,dealShown=false;
+let room='',me='',isHost=false,state=null,localTimer=null;
 function setStatus(msg,good=false){ $('status').textContent=msg; $('status').style.color=good?'#357a55':'#a94d43'; }
 if(!socket){ setStatus('افتح اللعبة بواسطة START-MAZAD.bat وليس بفتح index.html مباشرة.'); $('create').disabled=true; $('join').disabled=true; }
 else { socket.on('connect',()=>{ setStatus('متصل بالسيرفر ✓',true); $('create').disabled=false; $('join').disabled=false; }); socket.on('connect_error',()=>{ setStatus('السيرفر غير متصل. أغلق اللعبة وافتح START-MAZAD.bat ثم انتظر حتى يفتح المتصفح.'); $('create').disabled=true; $('join').disabled=true; }); socket.on('disconnect',()=>{ setStatus('انقطع الاتصال بالسيرفر.'); }); }
 function show(id){
   ['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
-  if(id!=='game') $('dealOverlay').style.display='none';
 }
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 $('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value});};
@@ -210,23 +191,18 @@ socket.on('state',s=>{
   state=s;
   if(s && s.phase==='auction'){
     clearInterval(localTimer);
-    $('dealOverlay').style.display='none';
-    dealShown=false;
-  }
+}
   renderState();
 });
 socket.on('roundStarted',d=>{
   clearInterval(localTimer);
-  $('dealOverlay').style.display='none';
-  dealShown=false;
-  show('game');
+show('game');
   if(state){
     state.phase='auction';
     state.turnEndsAt=d.turnEndsAt;
     renderAuction();
   }
 });
-socket.on('deal',d=>showDeal(d));
 socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
 function renderState(){
 if(!state)return;
@@ -235,18 +211,11 @@ if(state.phase!=='auction') clearInterval(localTimer);
 if(state.phase==='lobby'){enterRoom(state);return}
 if(state.phase==='auction'){
   clearInterval(localTimer);
-  $('dealOverlay').style.display='none';
-  dealShown=false;
-  $('lobby').classList.add('hidden');
+$('lobby').classList.add('hidden');
   $('game').classList.remove('hidden');
   $('selection').classList.add('hidden');
   $('finalBattle').classList.add('hidden');
   renderAuction();
-}
-else if(state.phase==='deal'){
-  clearInterval(localTimer);
-  show('game');
-  renderDealPause();
 }
 else if(state.phase==='selection'){show('selection');renderSelection();}
 else if(state.phase==='final'){show('finalBattle');renderFinal();}
@@ -255,26 +224,6 @@ function renderAuction(){const f=state.film;$('roundNo').textContent=state.round
 function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
 function bid(v){socket.emit('bid',{room,value:v});}
 document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
-$('dealNext').onclick=()=>{
-  if(!isHost)return;
-  $('dealNext').disabled=true;
-  socket.emit('nextAfterDeal',{room});
-};$('dealOverlay').style.display='none';dealShown=false;clearInterval(localTimer);socket.emit('nextAfterDeal',{room});};
-function renderDealPause(){clearInterval(localTimer);}
-function showDeal(d){
-clearInterval(localTimer);
-dealShown=true;
-$('dealHeading').textContent=d.sold?'تمت الصفقة 🔨':'لم يتم بيع الفيلم';
-$('dealName').textContent=d.sold?d.film+' — '+d.player:d.film;
-$('dealPrice').textContent=d.sold?d.price+' د.ك':'لم يُبع';
-$('dealValue').textContent=d.value+' د.ك';
-$('dealDiff').textContent=d.diffText||'';
-$('dealVerdict').textContent=d.verdict||'لا صفقة';
-$('dealNote').textContent=d.note||'';
-$('dealNext').disabled=!isHost;
-$('dealNext').textContent=isHost?'التالي — بدء الجولة التالية':'بانتظار بدء الجولة التالية...';
-$('dealOverlay').style.display='flex';
-}
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
 function renderFinal(){
 const ranked=state.finalRanked||[];
