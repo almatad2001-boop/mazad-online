@@ -260,7 +260,7 @@ $('dealDiff').textContent=d.diffText||'';
 $('dealVerdict').textContent=d.verdict||'لا صفقة';
 $('dealNote').textContent=d.note||'';
 $('dealNext').disabled=!isHost;
-$('dealNext').textContent=isHost?'التالي — بدء الجولة التالية':'انتظر المضيف...';
+$('dealNext').textContent=isHost?'التالي — بدء الجولة التالية':'بانتظار بدء الجولة التالية...';
 $('dealOverlay').style.display='flex';
 }
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
