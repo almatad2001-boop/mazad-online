@@ -181,13 +181,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 <section id="selection" class="hidden"><div class="card"><h1>🔥 المواجهة الأخيرة</h1><p class="muted">كل لاعب يحتفظ بكل أفلامه ويختار فيلمًا واحدًا فقط للمواجهة.</p><div id="selectionPlayer" class="turn"></div><div id="selectionMovies" class="collection"></div><div id="selectionWait" class="muted"></div></div></section>
 <section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">كل لاعب يختار فيلمًا واحدًا، ثم تتم المقارنة بطريقة سهلة وواضحة.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div></div><div class="card"><h2>🏅 نتائج المزاد</h2><div id="auctionAwards" class="awards"></div></div></section>
 </div>
-<div id="dealOverlay"><div class="dealbox">
-<h2 id="dealHeading">تمت الصفقة 🔨</h2>
-<div id="dealName" class="dealname"></div>
-<div id="dealPrice" class="dealprice"></div>
-<p id="dealNote" class="muted"></p>
-<br><button id="dealNext">التالي</button>
-</div></div>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = (typeof io==='function') ? io({transports:['websocket','polling']}) : null;
@@ -229,7 +223,7 @@ socket.on('roundStarted',d=>{
     renderAuction();
   }
 });
-socket.on('deal',d=>showDeal(d));
+socket.on('deal',()=>{});
 socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
 function renderState(){
 if(!state)return;
@@ -246,11 +240,7 @@ if(state.phase==='auction'){
   $('finalBattle').classList.add('hidden');
   renderAuction();
 }
-else if(state.phase==='deal'){
-  clearInterval(localTimer);
-  show('game');
-  renderDealPause();
-}
+
 else if(state.phase==='selection'){show('selection');renderSelection();}
 else if(state.phase==='final'){show('finalBattle');renderFinal();}
 }
