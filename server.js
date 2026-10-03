@@ -206,15 +206,7 @@ socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
 socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
 if(socket) socket.on('errorMsg',m=>setStatus(m));
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
-socket.on('state',s=>{
-  state=s;
-  if(s && s.phase==='auction'){
-    clearInterval(localTimer);
-    $('dealOverlay').style.display='none';
-    dealShown=false;
-  }
-  renderState();
-});
+socket.on('state',s=>{state=s;renderState();});
 socket.on('roundStarted',d=>{
   clearInterval(localTimer);
   $('dealOverlay').style.display='none';
@@ -255,11 +247,7 @@ function renderAuction(){const f=state.film;$('roundNo').textContent=state.round
 function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
 function bid(v){socket.emit('bid',{room,value:v});}
 document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
-$('dealNext').onclick=()=>{
-  if(!isHost)return;
-  $('dealNext').disabled=true;
-  socket.emit('nextAfterDeal',{room});
-};$('dealOverlay').style.display='none';dealShown=false;clearInterval(localTimer);socket.emit('nextAfterDeal',{room});};
+$('dealNext').onclick=()=>{if(!isHost)return;$('dealOverlay').style.display='none';dealShown=false;clearInterval(localTimer);socket.emit('nextAfterDeal',{room});};
 function renderDealPause(){clearInterval(localTimer);}
 function showDeal(d){
 clearInterval(localTimer);
