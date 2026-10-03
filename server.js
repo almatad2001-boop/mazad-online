@@ -193,7 +193,10 @@ let room='',me='',isHost=false,state=null,localTimer=null,dealShown=false;
 function setStatus(msg,good=false){ $('status').textContent=msg; $('status').style.color=good?'#357a55':'#a94d43'; }
 if(!socket){ setStatus('افتح اللعبة بواسطة START-MAZAD.bat وليس بفتح index.html مباشرة.'); $('create').disabled=true; $('join').disabled=true; }
 else { socket.on('connect',()=>{ setStatus('متصل بالسيرفر ✓',true); $('create').disabled=false; $('join').disabled=false; }); socket.on('connect_error',()=>{ setStatus('السيرفر غير متصل. أغلق اللعبة وافتح START-MAZAD.bat ثم انتظر حتى يفتح المتصفح.'); $('create').disabled=true; $('join').disabled=true; }); socket.on('disconnect',()=>{ setStatus('انقطع الاتصال بالسيرفر.'); }); }
-function show(id){['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function show(id){
+  ['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
+  if(id!=='game') $('dealOverlay').style.display='none';
+}
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 $('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value});};
 $('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('joinName').value||'لاعب').trim();room=$('roomCode').value.trim().toUpperCase();socket.emit('joinRoom',{room,name:me});};
@@ -204,6 +207,17 @@ socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
 if(socket) socket.on('errorMsg',m=>setStatus(m));
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
 socket.on('state',s=>{state=s;renderState();});
+socket.on('roundStarted',d=>{
+  clearInterval(localTimer);
+  $('dealOverlay').style.display='none';
+  dealShown=false;
+  show('game');
+  if(state){
+    state.phase='auction';
+    state.turnEndsAt=d.turnEndsAt;
+    renderAuction();
+  }
+});
 socket.on('deal',d=>showDeal(d));
 socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
 function renderState(){
@@ -211,8 +225,21 @@ if(!state)return;
 $('gameCode').textContent=room;
 if(state.phase!=='auction') clearInterval(localTimer);
 if(state.phase==='lobby'){enterRoom(state);return}
-if(state.phase==='auction'){show('game');renderAuction();}
-else if(state.phase==='deal'){clearInterval(localTimer);show('game');renderDealPause();}
+if(state.phase==='auction'){
+  clearInterval(localTimer);
+  $('dealOverlay').style.display='none';
+  dealShown=false;
+  $('lobby').classList.add('hidden');
+  $('game').classList.remove('hidden');
+  $('selection').classList.add('hidden');
+  $('finalBattle').classList.add('hidden');
+  renderAuction();
+}
+else if(state.phase==='deal'){
+  clearInterval(localTimer);
+  show('game');
+  renderDealPause();
+}
 else if(state.phase==='selection'){show('selection');renderSelection();}
 else if(state.phase==='final'){show('finalBattle');renderFinal();}
 }
