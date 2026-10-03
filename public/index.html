@@ -207,6 +207,17 @@ socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
 if(socket) socket.on('errorMsg',m=>setStatus(m));
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
 socket.on('state',s=>{state=s;renderState();});
+socket.on('roundStarted',d=>{
+  clearInterval(localTimer);
+  $('dealOverlay').style.display='none';
+  dealShown=false;
+  show('game');
+  if(state){
+    state.phase='auction';
+    state.turnEndsAt=d.turnEndsAt;
+    renderAuction();
+  }
+});
 socket.on('deal',d=>showDeal(d));
 socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
 function renderState(){
@@ -215,9 +226,13 @@ $('gameCode').textContent=room;
 if(state.phase!=='auction') clearInterval(localTimer);
 if(state.phase==='lobby'){enterRoom(state);return}
 if(state.phase==='auction'){
+  clearInterval(localTimer);
   $('dealOverlay').style.display='none';
   dealShown=false;
-  show('game');
+  $('lobby').classList.add('hidden');
+  $('game').classList.remove('hidden');
+  $('selection').classList.add('hidden');
+  $('finalBattle').classList.add('hidden');
   renderAuction();
 }
 else if(state.phase==='deal'){
