@@ -1,288 +1,96 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>مزاد</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#eee9df;color:#252622;font-family:Arial,Tahoma,sans-serif}
-.app{max-width:1100px;margin:auto;padding:24px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.logo{font-size:38px;font-weight:900}.badge{background:#dbe7e8;padding:8px 14px;border-radius:30px}
-.card{background:#fbf8f1;border:1px solid #ddd5c8;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 25px #00000009}
-h1,h2{margin:0 0 10px}.muted{color:#777}.row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:190px}
-label{display:block;font-weight:bold;margin:8px 0}input,select{width:100%;padding:13px;border:1px solid #d5cec2;border-radius:13px;font:inherit;background:white}
-button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:white;font-weight:bold;font:inherit;cursor:pointer}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
+*{box-sizing:border-box}body{margin:0;background:#eee9df;color:#252622;font-family:Arial,Tahoma,sans-serif}.app{max-width:1120px;margin:auto;padding:22px 18px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:38px;font-weight:900}.badge{background:#dbe7e8;padding:8px 14px;border-radius:30px}
+.card{background:#fbf8f1;border:1px solid #ddd5c8;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 25px #00000009}h1,h2,h3{margin:0 0 10px}.muted{color:#777}
+.row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:190px}label{display:block;font-weight:bold;margin:8px 0}input,select{width:100%;padding:13px;border:1px solid #d5cec2;border-radius:13px;font:inherit;background:#fff}
+button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
 .auction{display:grid;grid-template-columns:350px 1fr;gap:18px}.poster{aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:#293031;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.fallback{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:32px;font-weight:bold;padding:20px;background:#455f63}
-.title{font-size:38px;font-weight:900}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tag{background:#e7e1d6;padding:7px 10px;border-radius:20px}.rating{font-size:22px;font-weight:bold}.timer{text-align:center;font-size:52px;font-weight:900}.price{text-align:center;font-size:42px;font-weight:900;color:#416b73}
-.turn{background:#dbe7e8;padding:13px;border-radius:15px;text-align:center;font-weight:bold;margin:12px 0}.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}
-.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.status.in{background:#e2f0e7;color:#357a55}.status.lead{background:#e2f0e7;color:#357a55}.status.out{background:#f5dfdc;color:#a94d43}
+.title{font-size:38px;font-weight:900}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tag{background:#e7e1d6;padding:7px 10px;border-radius:20px}.rating{font-size:22px;font-weight:bold}.timer{text-align:center;font-size:52px;font-weight:900}.price{text-align:center;font-size:42px;font-weight:900;color:#416b73}.turn{background:#dbe7e8;padding:13px;border-radius:15px;text-align:center;font-weight:bold;margin:12px 0}
+.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
+.rarity{font-weight:900}.common{color:#777}.special{color:#416b73}.rare{color:#a86c24}.legendary{color:#9a6a13}
 .log{max-height:220px;overflow:auto}.logrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px 0;border-bottom:1px solid #ddd5c8}
-.hidden{display:none!important}
-#dealOverlay{position:fixed;inset:0;background:#182021aa;z-index:1000;align-items:center;justify-content:center;padding:20px}
-.dealbox{width:min(600px,100%);background:#fbf8f1;border-radius:25px;padding:25px;text-align:center}.dealname{font-size:29px;font-weight:900}.dealprice{font-size:40px;color:#416b73;font-weight:900;margin:8px}.dealvalue{background:#eee9df;padding:13px;border-radius:14px}.verdict{padding:13px;border-radius:14px;font-size:23px;font-weight:900;margin:12px 0}.excellent{background:#e2f0e7;color:#357a55}.good{background:#e4eeee;color:#416b73}.win{background:#edf0e8;color:#667443}.bad{background:#f5e8d5;color:#a86c24}.terrible{background:#f5dfdc;color:#a94d43}
-table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:white;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}
-@media(max-width:800px){.auction{grid-template-columns:1fr}.poster{max-width:290px;margin:auto}.buttons{grid-template-columns:repeat(2,1fr)}}
+#dealOverlay{position:fixed;inset:0;background:#182021aa;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}.dealbox{width:min(650px,100%);background:#fbf8f1;border-radius:25px;padding:25px;text-align:center}.dealname{font-size:29px;font-weight:900}.dealprice{font-size:40px;color:#416b73;font-weight:900}.dealvalue{background:#eee9df;padding:13px;border-radius:14px;margin:12px 0}.verdict{padding:13px;border-radius:14px;font-size:23px;font-weight:900;margin:12px 0}.excellent{background:#e2f0e7;color:#357a55}.good{background:#e4eeee;color:#416b73}.win{background:#edf0e8;color:#667443}.bad{background:#f5e8d5;color:#a86c24}.terrible{background:#f5dfdc;color:#a94d43}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.stat{padding:16px;background:#fff;border:1px solid #ddd5c8;border-radius:17px}.stat b{display:block;font-size:24px;margin-top:5px}
+.awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.award{background:#fff;border:1px solid #ddd5c8;border-radius:18px;padding:16px}.award .emoji{font-size:30px}.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.metric{background:#fff;border:1px solid #ddd5c8;border-radius:16px;padding:14px}.metric b{font-size:23px;display:block;margin-top:4px}
+table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
+.room-code{font-size:42px;letter-spacing:7px;font-weight:900;text-align:center;background:#eee9df;border:2px dashed #416b73;border-radius:18px;padding:18px;margin:14px 0;direction:ltr}.copyrow{display:flex;gap:8px;align-items:stretch}.copyrow button{min-width:130px}.copyok{color:#357a55;font-weight:bold;min-height:22px}.battle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.battle-card{background:#fff;border:1px solid #ddd5c8;border-radius:20px;overflow:hidden}.battle-card img{width:100%;aspect-ratio:2/3;object-fit:cover}.battle-body{padding:15px}.scoreline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee5d9}.total-score{font-size:30px;font-weight:900;color:#416b73;margin-top:10px}.champion{background:#e2f0e7;border:2px solid #357a55;border-radius:20px;padding:22px;text-align:center;font-size:28px;font-weight:900}.pick-btn{width:100%;margin-top:8px}.selected{outline:3px solid #416b73}.formula{background:#eee9df;border-radius:14px;padding:13px;margin-top:12px}.final-table{margin-top:16px;overflow:auto}.final-table table{min-width:650px}@media(max-width:800px){.auction{grid-template-columns:1fr}.poster{max-width:290px;margin:auto}.buttons{grid-template-columns:repeat(2,1fr)}}
 </style>
+</head>
 <style>
-/* Mazad Mobile v5 */
-:root{--touch:48px}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;min-height:100%;-webkit-text-size-adjust:100%}
-body{overflow-x:hidden}
-button,input,select{font:inherit}
-button{min-height:var(--touch);touch-action:manipulation}
-input,select{min-height:var(--touch);font-size:16px}
-img{max-width:100%;height:auto}
-@media (max-width:700px){
-  body{font-size:16px}
-  .container,.wrap,.app,.shell,.page{width:100%!important;max-width:100%!important;padding-left:14px!important;padding-right:14px!important}
-  .grid,.cards,.players,.room-grid,.auction-grid{grid-template-columns:1fr!important}
-  .actions,.buttons,.controls{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px!important}
-  .actions button,.buttons button,.controls button{width:100%!important;min-height:52px!important}
-  .hero h1{font-size:32px!important}
-  .modal,.dialog,.panel{width:min(94vw,520px)!important}
-  .film-card{min-width:0!important}
-  .code{font-size:34px!important;letter-spacing:6px}
-  .timer{font-size:38px!important}
-  .auction-actions{position:sticky;bottom:0;background:rgba(255,255,255,.96);padding:10px 0;z-index:10}
-}
-</style></head>
-<body>
-<div class="app">
-<div class="top"><div class="logo">مزاد</div><div class="badge">نسخة تجريبية v4</div></div>
-
-<section id="setup" class="card">
+*{box-sizing:border-box}body{margin:0;background:#eee9df;color:#252622;font-family:Arial,Tahoma,sans-serif}.app{max-width:1120px;margin:auto;padding:22px 18px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:38px;font-weight:900}.badge{background:#dbe7e8;padding:8px 14px;border-radius:30px}
+.card{background:#fbf8f1;border:1px solid #ddd5c8;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 25px #00000009}h1,h2,h3{margin:0 0 10px}.muted{color:#777}
+.row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:190px}label{display:block;font-weight:bold;margin:8px 0}input,select{width:100%;padding:13px;border:1px solid #d5cec2;border-radius:13px;font:inherit;background:#fff}
+button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
+.auction{display:grid;grid-template-columns:350px 1fr;gap:18px}.poster{aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:#293031;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.fallback{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:32px;font-weight:bold;padding:20px;background:#455f63}
+.title{font-size:38px;font-weight:900}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tag{background:#e7e1d6;padding:7px 10px;border-radius:20px}.rating{font-size:22px;font-weight:bold}.timer{text-align:center;font-size:52px;font-weight:900}.price{text-align:center;font-size:42px;font-weight:900;color:#416b73}.turn{background:#dbe7e8;padding:13px;border-radius:15px;text-align:center;font-weight:bold;margin:12px 0}
+.buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
+.rarity{font-weight:900}.common{color:#777}.special{color:#416b73}.rare{color:#a86c24}.legendary{color:#9a6a13}
+.log{max-height:220px;overflow:auto}.logrow{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px 0;border-bottom:1px solid #ddd5c8}
+#dealOverlay{position:fixed;inset:0;background:#182021aa;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}.dealbox{width:min(650px,100%);background:#fbf8f1;border-radius:25px;padding:25px;text-align:center}.dealname{font-size:29px;font-weight:900}.dealprice{font-size:40px;color:#416b73;font-weight:900}.dealvalue{background:#eee9df;padding:13px;border-radius:14px;margin:12px 0}.verdict{padding:13px;border-radius:14px;font-size:23px;font-weight:900;margin:12px 0}.excellent{background:#e2f0e7;color:#357a55}.good{background:#e4eeee;color:#416b73}.win{background:#edf0e8;color:#667443}.bad{background:#f5e8d5;color:#a86c24}.terrible{background:#f5dfdc;color:#a94d43}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.stat{padding:16px;background:#fff;border:1px solid #ddd5c8;border-radius:17px}.stat b{display:block;font-size:24px;margin-top:5px}
+.awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.award{background:#fff;border:1px solid #ddd5c8;border-radius:18px;padding:16px}.award .emoji{font-size:30px}.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.metric{background:#fff;border:1px solid #ddd5c8;border-radius:16px;padding:14px}.metric b{font-size:23px;display:block;margin-top:4px}
+table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
+.room-code{font-size:42px;letter-spacing:7px;font-weight:900;text-align:center;background:#eee9df;border:2px dashed #416b73;border-radius:18px;padding:18px;margin:14px 0;direction:ltr}.copyrow{display:flex;gap:8px;align-items:stretch}.copyrow button{min-width:130px}.copyok{color:#357a55;font-weight:bold;min-height:22px}.battle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.battle-card{background:#fff;border:1px solid #ddd5c8;border-radius:20px;overflow:hidden}.battle-card img{width:100%;aspect-ratio:2/3;object-fit:cover}.battle-body{padding:15px}.scoreline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee5d9}.total-score{font-size:30px;font-weight:900;color:#416b73;margin-top:10px}.champion{background:#e2f0e7;border:2px solid #357a55;border-radius:20px;padding:22px;text-align:center;font-size:28px;font-weight:900}.pick-btn{width:100%;margin-top:8px}.selected{outline:3px solid #416b73}.formula{background:#eee9df;border-radius:14px;padding:13px;margin-top:12px}.final-table{margin-top:16px;overflow:auto}.final-table table{min-width:650px}@media(max-width:800px){.auction{grid-template-columns:1fr}.poster{max-width:290px;margin:auto}.buttons{grid-template-columns:repeat(2,1fr)}}
+</style><body>
+<div class="wrap">
+<section id="lobby" class="card">
 <h1>مزاد الأفلام 🎬</h1>
-<p class="muted">كل لاعب له دور 15 ثانية. اللاعب صاحب أعلى مزايدة ينتظر رد المنافسين ولا يستطيع الانسحاب من عرضه.</p>
-<div class="row">
-<div class="field"><label>عدد اللاعبين</label><select id="playerCount"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
-<div class="field"><label>الميزانية</label><input id="budget" type="number" min="20" value="500"></div>
-<div class="field"><label>عدد الأفلام</label><select id="rounds"><option>4</option><option>6</option><option selected>8</option></select></div>
+<p class="muted">نسخة أونلاين — أنشئ غرفة وشارك الكود مع أصدقائك.</p>
+<div id="lobbyForms">
+<div class="row"><div class="field"><label>اسمك</label><input id="myName" maxlength="20" value="عبدالله"></div><div class="field"><label>عدد اللاعبين</label><select id="playerCount"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div><div class="field"><label>الميزانية</label><input id="budget" type="number" min="20" value="500"></div><div class="field"><label>عدد الأفلام</label><select id="rounds"><option>4</option><option>6</option><option selected>8</option></select></div></div>
+<div class="buttons"><button id="create">إنشاء غرفة</button></div>
+<hr><div class="row"><div class="field"><label>كود الغرفة</label><input id="roomCode" maxlength="8" placeholder="مثال: MZ4821"></div><div class="field"><label>اسمك</label><input id="joinName" maxlength="20" placeholder="اسم اللاعب"></div></div><button id="join">دخول غرفة</button>
 </div>
-<div id="names" class="row"></div><br>
-<button id="startBtn">ابدأ المزاد</button>
+<div id="roomInfo" class="hidden"><h2>غرفة المزاد</h2><p class="muted">أرسل هذا الكود لأصدقائك للدخول إلى نفس الغرفة:</p><div id="code" class="room-code">----</div><div class="copyrow"><input id="shareCode" readonly><button id="copyCode" type="button">نسخ الكود</button></div><div id="copyMsg" class="copyok"></div><hr><h3>اللاعبون <span id="playerCountNow"></span></h3><div id="roomPlayers" class="players"></div><p id="hostHint" class="muted"></p><button id="startGame" class="hidden">🚀 ابدأ المزاد</button></div>
+<div id="status" class="muted"></div>
 </section>
 
 <section id="game" class="hidden">
+<div class="card"><div class="row" style="align-items:center;justify-content:space-between"><div><b>الغرفة:</b> <span id="gameCode"></span></div><div id="phaseLabel" class="turn"></div></div></div>
 <div class="auction">
 <div class="card"><div id="poster" class="poster"></div></div>
-<div class="card">
-<div class="muted">الفيلم <span id="roundNo"></span></div>
-<div id="itemTitle" class="title"></div>
-<div id="tags" class="tags"></div>
-<div id="rating" class="rating"></div>
-<div id="turn" class="turn"></div>
-<div id="timer" class="timer">15</div>
-<div id="price" class="price">0 د.ك</div>
-<div class="buttons">
-<button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button>
-</div>
-<div class="muted" style="margin-top:13px;font-weight:bold">زيادة مخصصة — يجب أن تكون من مضاعفات 10، بين 10 و500</div>
-<div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="مثال: 40"><button id="customBtn">مزايدة</button></div>
-<button id="worthBtn" class="danger" style="width:100%">يستاهل — انسحب</button>
-</div>
-</div>
-<div class="card"><h2>اللاعبون</h2><div id="players" class="players"></div></div>
-<div class="card"><h2>سجل المشتريات</h2><div id="log" class="log"></div></div>
+<div class="card"><div class="muted">الفيلم <span id="roundNo"></span></div><div id="itemTitle" class="title"></div><div id="tags" class="tags"></div><div id="rarity" class="rarity"></div><div class="muted" style="margin-top:7px">⭐ التقييم والقيمة الحقيقية مخفيان</div><div id="turn" class="turn"></div><div id="timer" class="timer">15</div><div id="price" class="price">0 د.ك</div><div class="buttons"><button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button></div><div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="زيادة 10–500"><button id="customBtn">مزايدة</button></div><button id="worth" class="danger" style="width:100%">يستاهل — انسحب</button></div></div>
+<div class="card"><h2>اللاعبون</h2><div id="players" class="players"></div></div><div class="card"><h2>سجل المشتريات</h2><div id="log" class="log"></div></div>
 </section>
 
-<section id="results" class="hidden">
-<div class="card"><h1>نهاية المزاد 🏆</h1><div id="summary"></div><div id="ranking"></div></div>
-<div id="collections"></div>
-<div class="card"><button onclick="location.reload()">لعبة جديدة</button></div>
-</section>
+<section id="selection" class="hidden"><div class="card"><h1>🔥 المواجهة الأخيرة</h1><p class="muted">كل لاعب يحتفظ بكل أفلامه ويختار فيلمًا واحدًا فقط للمواجهة.</p><div id="selectionPlayer" class="turn"></div><div id="selectionMovies" class="collection"></div><div id="selectionWait" class="muted"></div></div></section>
+<section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">النتيجة تعتمد على الشهرة + التقييم + الجوائز والترشيحات.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div></div></section>
 </div>
-
-<div id="dealOverlay" class="hidden">
-<div class="dealbox">
-<h2 id="dealHeading">تمت الصفقة 🔨</h2>
-<div id="dealFilm" class="dealname"></div>
-<div id="dealPrice" class="dealprice"></div>
-<div class="dealvalue">القيمة الحقيقية: <b id="dealValue"></b><br><span id="dealDifference"></span></div>
-<div id="dealVerdict" class="verdict"></div>
-<p id="dealNote"></p>
-<button id="dealNext">التالي</button>
-</div>
-</div>
-
+<div id="dealOverlay"><div class="dealbox"><h2 id="dealHeading">تمت الصفقة 🔨</h2><div id="dealName" class="dealname"></div><div id="dealPrice" class="dealprice"></div><div class="dealvalue">القيمة الحقيقية: <b id="dealValue"></b><br><span id="dealDiff"></span></div><div id="dealVerdict" class="verdict"></div><div id="dealNote"></div><br><button id="dealNext">التالي</button></div></div>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-const films=[
-["The Dark Knight",2008,9.0,100,"جريمة • دراما","https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"],
-["Inception",2010,8.8,92,"خيال علمي • إثارة","https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"],
-["Interstellar",2014,8.7,88,"خيال علمي • دراما","https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"],
-["The Godfather",1972,9.2,120,"جريمة • دراما","https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg"],
-["Fight Club",1999,8.8,84,"دراما • إثارة","https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg"],
-["Forrest Gump",1994,8.8,90,"دراما • رومانسية","https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg"],
-["Gladiator",2000,8.5,78,"ملحمي • أكشن","https://image.tmdb.org/t/p/w500/ty8TnY2K0rQxazBM5J7x5Jw9b1L.jpg"],
-["The Matrix",1999,8.7,86,"خيال علمي • أكشن","https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg"]
-].map(x=>({name:x[0],year:x[1],rating:x[2],value:x[3],genre:x[4],img:x[5]}));
-
+const socket = (typeof io==='function') ? io({transports:['websocket','polling']}) : null;
 const $=id=>document.getElementById(id);
-let players=[],pool=[],film=null,round=0,currentTurn=0,leader=-1,highest=0,time=15,timer=null,history=[];
-
-function namesUI(){
- let n=+$("playerCount").value;
- $("names").innerHTML=Array.from({length:n},(_,i)=>`<div class="field"><label>اسم اللاعب ${i+1}</label><input id="n${i}" value="لاعب ${i+1}"></div>`).join("");
-}
-$("playerCount").addEventListener("change",namesUI);namesUI();
-
-$("startBtn").onclick=()=>{
- let n=+$("playerCount").value,b=+$("budget").value,r=+$("rounds").value;
- players=Array.from({length:n},(_,i)=>({name:$("n"+i).value||"لاعب "+(i+1),balance:b,spent:0,films:[],active:true}));
- pool=films.slice().sort(()=>Math.random()-.5).slice(0,Math.min(r,films.length));round=0;history=[];
- $("setup").classList.add("hidden");$("game").classList.remove("hidden");nextFilm();
-};
-
-function nextFilm(){
- if(round>=pool.length){finish();return}
- film=pool[round++];currentTurn=0;leader=-1;highest=0;time=15;players.forEach(p=>p.active=true);
- $("roundNo").textContent=round+" / "+pool.length;$("itemTitle").textContent=film.name;
- $("tags").innerHTML=`<span class="tag">${film.year}</span><span class="tag">${film.genre}</span>`;
- $("rating").innerHTML=`★ ${film.rating} / 10`;
- $("poster").innerHTML=`<img src="${film.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'><div class="fallback">${film.name}</div>`;
- $("price").textContent="0 د.ك";render();startTurn();
-}
-
-function activePlayers(){return players.filter(p=>p.active)}
-function startTurn(){
- if(leader>=0 && activePlayers().filter((p,i)=>players.indexOf(p)!==leader).length===0){sell();return}
- let tries=0;
- while(tries<players.length && (!players[currentTurn].active || currentTurn===leader)){currentTurn=(currentTurn+1)%players.length;tries++}
- if(tries>=players.length){if(leader>=0)sell();else noSale();return}
- time=15;$("timer").textContent=time;render();clearInterval(timer);
- timer=setInterval(()=>{time--;$("timer").textContent=time;if(time<=0){clearInterval(timer);worthIt()}},1000);
-}
-function nextTurn(){currentTurn=(currentTurn+1)%players.length;startTurn()}
-
-function raise(amount){
- if(!Number.isInteger(amount)||amount<10||amount>500||amount%10!==0)return;
- let p=players[currentTurn];
- if(!p.active||currentTurn===leader)return;
- let newPrice=highest+amount;
- if(newPrice>p.balance){alert("المبلغ يتجاوز رصيدك.");return}
- leader=currentTurn;highest=newPrice;$("price").textContent=highest+" د.ك";nextTurn();
-}
-document.querySelectorAll("[data-inc]").forEach(b=>b.onclick=()=>raise(Number(b.dataset.inc)));
-$("customBtn").onclick=()=>{
- let v=Number($("custom").value);
- if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert("المبلغ يجب أن يكون 10 أو 20 أو 40 أو 100... وبحد أقصى 500.");return}
- raise(v);$("custom").value="";
-};
-$("worthBtn").onclick=worthIt;
-
-function worthIt(){
- if(currentTurn===leader)return;
- let p=players[currentTurn];if(!p.active)return;
- p.active=false;clearInterval(timer);
- if(activePlayers().length===0){if(leader>=0)sell();else noSale();return}
- if(leader>=0 && activePlayers().length===1){sell();return}
- nextTurn();
-}
-
-function render(){
- $("players").innerHTML=players.map((p,i)=>`<div class="player ${i===currentTurn?'turn':''} ${i===leader?'leader':''} ${!p.active?'out':''}">
-<b>${p.name}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br>
-<span class="status ${i===leader?'lead':p.active?'in':'out'}">${i===leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join("");
- $("turn").textContent=`دور: ${players[currentTurn].name}${leader>=0?" | أعلى مزايدة: "+players[leader].name+" — "+highest+" د.ك":""}`;
- $("log").innerHTML=history.length?history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${x.film}</span><b>${x.player}</b><span>${x.price} د.ك</span></div>`).join(""):"لا توجد مشتريات بعد.";
-}
-
-function sell(){
- clearInterval(timer);let p=players[leader];p.balance-=highest;p.spent+=highest;p.films.push({...film,price:highest});
- history.push({film:film.name,player:p.name,price:highest});showDeal(p);
-}
-function noSale(){
- clearInterval(timer);history.push({film:film.name,player:"لم يُبع",price:0});
- $("dealHeading").textContent="لم يتم بيع الفيلم";$("dealFilm").textContent=film.name;$("dealPrice").textContent="لم يُبع";
- $("dealValue").textContent=film.value+" د.ك";$("dealDifference").textContent="";$("dealVerdict").textContent="لا صفقة";$("dealVerdict").className="verdict win";$("dealNote").textContent="لم تبقَ مزايدة صالحة.";
-$("dealOverlay").classList.remove("hidden");$("dealOverlay").style.display="flex";
-}
-function showDeal(p){
- let diff=film.value-highest,pct=diff/film.value*100,txt,cls;
- if(pct>=25){txt="🔥 صفقة ممتازة";cls="excellent"}else if(pct>=10){txt="🟢 صفقة جيدة";cls="good"}else if(pct>=0){txt="🔵 صفقة رابحة";cls="win"}else if(pct>-20){txt="🟠 صفقة خاسرة";cls="bad"}else{txt="🔴 صفقة سيئة جدًا";cls="terrible"}
- $("dealHeading").textContent="تمت الصفقة 🔨";$("dealFilm").textContent=film.name+" — "+p.name;$("dealPrice").textContent=highest+" د.ك";
- $("dealValue").textContent=film.value+" د.ك";$("dealDifference").textContent=`الفرق: ${diff>=0?"+":""}${diff.toFixed(0)} د.ك (${pct.toFixed(0)}%)`;
- $("dealVerdict").textContent=txt;$("dealVerdict").className="verdict "+cls;$("dealNote").textContent=diff>=0?`وفّرت ${diff.toFixed(0)} د.ك عن القيمة.`:`دفعت ${(-diff).toFixed(0)} د.ك فوق القيمة.`;
- $("dealOverlay").classList.remove("hidden");$("dealOverlay").style.display="flex";
-}
-$("dealNext").onclick=()=>{$("dealOverlay").style.display="none";$("dealOverlay").classList.add("hidden");nextFilm()};
-
-function finish(){
- $("game").classList.add("hidden");$("results").classList.remove("hidden");
- let ranked=players.slice().sort((a,b)=>score(b)-score(a));let all=players.flatMap(p=>p.films);
- $("summary").innerHTML=`<div class="row"><div class="card" style="flex:1">الأفلام المباعة<br><b>${all.length}</b></div><div class="card" style="flex:1">أعلى مجموعة<br><b>${ranked[0]?.name||"—"}</b></div></div>`;
- $("ranking").innerHTML=`<table><tr><th>#</th><th>اللاعب</th><th>مجموع التقييم</th><th>المتوسط</th><th>المصروف</th><th>المتبقي</th><th>الأفلام</th></tr>${ranked.map((p,i)=>`<tr><td>${i+1}</td><td><b>${p.name}</b></td><td>★ ${score(p).toFixed(1)}</td><td>${p.films.length?(score(p)/p.films.length).toFixed(2):"—"}</td><td>${p.spent}</td><td>${p.balance}</td><td>${p.films.length}</td></tr>`).join("")}</table>`;
- $("collections").innerHTML=ranked.map((p,i)=>`<div class="card"><h2>${i+1}. ${p.name}</h2><div class="collection">${p.films.slice().sort((a,b)=>b.rating-a.rating).map(f=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${f.name}</b><br>★ ${f.rating}<br>دفع: ${f.price} د.ك<br>القيمة: ${f.value} د.ك</div></div>`).join("")||"<span class='muted'>لا توجد أفلام.</span>"}</div></div>`).join("");
-}
-function score(p){return p.films.reduce((s,f)=>s+f.rating,0)}
-</script>
-
-<script>
-(function(){
-  function getRoomFromUrl(){
-    try{
-      const m=location.pathname.match(/\/join\/([A-Za-z0-9_-]{3,12})/);
-      if(m) return decodeURIComponent(m[1]).toUpperCase();
-      const q=new URLSearchParams(location.search).get('room');
-      return q ? q.toUpperCase() : '';
-    }catch(e){return '';}
-  }
-  window.MazadMobile = {
-    roomFromUrl:getRoomFromUrl,
-    inviteUrl:function(room){
-      const base=location.origin+location.pathname.replace(/\/join\/[^/]+\/?$/,'/');
-      return base.replace(/\/$/,'')+'/join/'+encodeURIComponent(room);
-    },
-    share:function(room){
-      const url=this.inviteUrl(room);
-      const data={title:'مزاد',text:'انضم إلى لعبة مزاد 🎬\\nكود اللعبة: '+room,url:url};
-      if(navigator.share){ return navigator.share(data).catch(function(){return false;}); }
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        return navigator.clipboard.writeText(url).then(function(){alert('تم نسخ رابط الدعوة');});
-      }
-      window.prompt('انسخ رابط الدعوة:',url);
-      return Promise.resolve();
-    }
-  };
-  window.addEventListener('load',function(){
-    const room=getRoomFromUrl();
-    if(!room) return;
-    // Prefill common room-code inputs.
-    document.querySelectorAll('input').forEach(function(i){
-      const ph=(i.placeholder||'').toLowerCase();
-      const aria=(i.getAttribute('aria-label')||'').toLowerCase();
-      if(ph.includes('room')||ph.includes('غرفة')||aria.includes('room')||aria.includes('غرفة')){
-        if(!i.value) i.value=room;
-      }
-    });
-    document.body.dataset.inviteRoom=room;
-  });
-})();
-</script>
-
-<script>
-(function(){
-  function addShare(){
-    const candidates=[...document.querySelectorAll('*')].filter(e=>{
-      const t=(e.textContent||'').trim();
-      return /^MZ\d{4}$/.test(t) || /MZ\d{4}/.test(t);
-    });
-    const host=candidates.find(e=>e.children.length<5);
-    if(!host || document.getElementById('mazad-mobile-share')) return;
-    const room=((host.textContent||'').match(/MZ\d{4}/)||[])[0];
-    if(!room) return;
-    const b=document.createElement('button');
-    b.id='mazad-mobile-share';
-    b.type='button';
-    b.textContent='📲 مشاركة اللعبة';
-    b.style.cssText='display:block;width:100%;min-height:52px;margin:12px 0;border:0;border-radius:14px;font-weight:800;cursor:pointer;';
-    b.onclick=()=>window.MazadMobile.share(room);
-    host.parentElement && host.parentElement.appendChild(b);
-  }
-  const obs=new MutationObserver(addShare);
-  obs.observe(document.documentElement,{childList:true,subtree:true});
-  setTimeout(addShare,500);
-})();
-</script>
-</body>
-</html>
+let room='',me='',isHost=false,state=null,localTimer=null,dealShown=false;
+function setStatus(msg,good=false){ $('status').textContent=msg; $('status').style.color=good?'#357a55':'#a94d43'; }
+if(!socket){ setStatus('افتح اللعبة بواسطة START-MAZAD.bat وليس بفتح index.html مباشرة.'); $('create').disabled=true; $('join').disabled=true; }
+else { socket.on('connect',()=>{ setStatus('متصل بالسيرفر ✓',true); $('create').disabled=false; $('join').disabled=false; }); socket.on('connect_error',()=>{ setStatus('السيرفر غير متصل. أغلق اللعبة وافتح START-MAZAD.bat ثم انتظر حتى يفتح المتصفح.'); $('create').disabled=true; $('join').disabled=true; }); socket.on('disconnect',()=>{ setStatus('انقطع الاتصال بالسيرفر.'); }); }
+function show(id){['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+$('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value});};
+$('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('joinName').value||'لاعب').trim();room=$('roomCode').value.trim().toUpperCase();socket.emit('joinRoom',{room,name:me});};
+$('startGame').onclick=()=>socket.emit('startGame',{room});
+$('copyCode').onclick=async()=>{const value=$('code').textContent.trim();try{await navigator.clipboard.writeText(value);$('copyMsg').textContent='تم نسخ الكود ✓';}catch(e){$('shareCode').focus();$('shareCode').select();document.execCommand('copy');$('copyMsg').textContent='تم نسخ الكود ✓';}setTimeout(()=>$('copyMsg').textContent='',1800);};
+socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
+socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
+if(socket) socket.on('errorMsg',m=>setStatus(m));
+function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
+socket.on('state',s=>{state=s;renderState();});
+socket.on('deal',d=>showDeal(d));
+socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
+function renderState(){if(!state)return;$('gameCode').textContent=room;if(state.phase==='lobby'){enterRoom(state);return}if(state.phase==='auction'){show('game');renderAuction();}else if(state.phase==='selection'){show('selection');renderSelection();}else if(state.phase==='final'){show('finalBattle');renderFinal();}}
+function renderAuction(){const f=state.film;$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year}</span><span class="tag">${f.genre}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`<img src="${f.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="fallback">${esc(f.name)}</div>`;$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
+function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
+function bid(v){socket.emit('bid',{room,value:v});}
+document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
+$('dealNext').onclick=()=>{ $('dealOverlay').style.display='none';dealShown=false;socket.emit('nextAfterDeal',{room});};
+function showDeal(d){dealShown=true;$('dealHeading').textContent=d.sold?'تمت الصفقة 🔨':'لم يتم بيع الفيلم';$('dealName').textContent=d.sold?d.film+' — '+d.player:d.film;$('dealPrice').textContent=d.sold?d.price+' د.ك':'لم يُبع';$('dealValue').textContent=d.value+' د.ك';$('dealDiff').textContent=d.diffText||'';$('dealVerdict').textContent=d.verdict||'لا صفقة';$('dealNote').textContent=d.note||'';$('dealOverlay').style.display='flex';}
+function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img src="${f.img}" onerror="this.style.display='none'"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
+function renderFinal(){const ranked=state.finalRanked||[];$('battleCards').innerHTML=ranked.map((x,i)=>`<div class="battle-card"><img src="${x.film.img}" onerror="this.style.display='none'"><div class="battle-body"><h2>${i===0?'🥇 ':''}${esc(x.player)}</h2><h3>${esc(x.film.name)}</h3><div class="scoreline"><span>🌍 الشهرة</span><b>${x.fame}/100</b></div><div class="scoreline"><span>⭐ التقييم</span><b>${x.film.rating}/10</b></div><div class="scoreline"><span>🏆 الجوائز</span><b>${x.awards}</b></div><div class="muted" style="margin-top:8px">${esc(x.awardText)}</div><div class="total-score">${x.total.toFixed(1)} نقطة</div></div></div>`).join('');if(ranked[0])$('champion').innerHTML=`🏆 الفائز بالمواجهة الأخيرة<br><span style="font-size:22px">${esc(ranked[0].player)} — ${esc(ranked[0].film.name)}</span><div class="formula">النتيجة: <b>${ranked[0].total.toFixed(1)}</b> نقطة<br>الشهرة 45% + التقييم 35% + الجوائز والترشيحات 20%</div>`;$('battleDetails').innerHTML=`<div class="final-table"><table><tr><th>الترتيب</th><th>اللاعب</th><th>الفيلم</th><th>الشهرة</th><th>التقييم</th><th>الجوائز</th><th>النقاط</th></tr>${ranked.map((x,i)=>`<tr><td>${i+1}</td><td><b>${esc(x.player)}</b></td><td>${esc(x.film.name)}</td><td>${x.fame}</td><td>${x.film.rating}</td><td>${x.awards}</td><td><b>${x.total.toFixed(1)}</b></td></tr>`).join('')}</table></div>`;}
+</script></body></html>
