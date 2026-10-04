@@ -152,9 +152,24 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 .event-box{margin:10px 0;padding:12px;border:1px solid rgba(216,180,90,.35);border-radius:14px;background:rgba(216,180,90,.08);color:#f7f2e7}
 .secret-box{margin:10px 0;padding:16px;border:2px solid #d8b45a;border-radius:16px;background:rgba(216,180,90,.1);text-align:center}
 </style>
+<style>
+#savedResults{margin-top:16px}.saved-results{background:rgba(12,31,27,.72);border:1px solid rgba(216,180,90,.25);border-radius:16px;padding:14px}.saved-results h3{color:#f0d98b}.saved-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(216,180,90,.12)}
+</style></style><style id="account-ui">
+.account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.account-box{padding:18px;border:1px solid rgba(216,180,90,.3);border-radius:18px;background:rgba(7,25,21,.8)}.account-box h2{margin-top:0;color:#f0d98b}.account-box input{width:100%;margin:7px 0}.account-actions{display:flex;gap:8px;flex-wrap:wrap}.account-msg{min-height:24px;margin-top:8px}.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.profile-stat{padding:12px;border:1px solid rgba(216,180,90,.2);border-radius:14px;background:rgba(216,180,90,.06);text-align:center}.profile-stat b{display:block;font-size:22px;color:#f0d98b}.account-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.account-name{color:#f0d98b;font-weight:900}
 </style><body>
 <div class="wrap">
-<section id="lobby" class="card">
+<section id="account" class="card">
+<div id="authForms">
+<h1>🔐 حسابك</h1><p class="muted">أنشئ حسابًا حتى تُحفظ نتائجك وتظهر لك من أي جهاز.</p>
+<div class="account-grid">
+<div class="account-box"><h2>تسجيل الدخول</h2><input id="loginUser" maxlength="20" placeholder="اسم المستخدم"><input id="loginPass" type="password" placeholder="كلمة المرور"><button id="loginBtn">دخول</button></div>
+<div class="account-box"><h2>إنشاء حساب</h2><input id="regUser" maxlength="20" placeholder="اسم المستخدم"><input id="regPass" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)"><button id="registerBtn">إنشاء حساب</button></div>
+</div><div id="authMsg" class="account-msg muted"></div>
+</div>
+<div id="accountLogged" class="hidden"><div class="account-top"><div>مرحبًا، <span id="accountName" class="account-name"></span> 👋</div><div class="account-actions"><button id="profileBtn" class="secondary">📊 ملفي</button><button id="logoutBtn" class="danger">تسجيل الخروج</button></div></div>
+<div id="profilePanel" class="hidden account-box"><h2>📊 ملفي</h2><div id="profileStats" class="profile-grid"></div><h3>آخر المباريات</h3><div id="profileResults"></div></div></div>
+</section>
+<section id="lobby" class="card hidden">
 <h1>مزاد 🎬⭐</h1>
 <p class="muted">نسخة أونلاين — أنشئ غرفة وشارك الكود مع أصدقائك.</p>
 <div id="lobbyForms">
@@ -184,7 +199,12 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 </section>
 
 <section id="selection" class="hidden"><div class="card"><h1>🔥 المواجهة الأخيرة</h1><p class="muted">كل لاعب يحتفظ بكل أفلامه ويختار فيلمًا واحدًا فقط للمواجهة.</p><div id="selectionPlayer" class="turn"></div><div id="selectionMovies" class="collection"></div><div id="selectionWait" class="muted"></div></div></section>
-<section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">كل لاعب يختار فيلمًا واحدًا، ثم تتم المقارنة بطريقة سهلة وواضحة.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div></div><div class="card"><h2>🏅 نتائج المزاد</h2><div id="auctionAwards" class="awards"></div></div></section>
+<section id="finalBattle" class="hidden"><div class="card"><h1>🏆 المواجهة الأخيرة</h1><p class="muted">كل لاعب يختار فيلمًا واحدًا، ثم تتم المقارنة بطريقة سهلة وواضحة.</p><div id="battleCards" class="battle-grid"></div></div><div class="card"><div id="champion" class="champion"></div><div id="battleDetails"></div>
+<div id="savedResults"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+<button id="homeBtn" class="secondary">🏠 العودة للصفحة الرئيسية</button>
+<button id="clearScoresBtn" class="danger">🗑️ مسح نتائجي المحفوظة</button>
+</div></div><div class="card"><h2>🏅 نتائج المزاد</h2><div id="auctionAwards" class="awards"></div></div></section>
 </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
@@ -363,23 +383,44 @@ const celebrities = [
 {id:'celebrity-170',name:'Denzel Washington',year:2026,rating:8.5,baseValue:80,genre:'مشهور عالمي',rarity:'نادر',rarityClass:'rare',img:'',fame:96,awards:7},
 {id:'celebrity-171',name:'Sergio Ramos',year:2026,rating:8.2,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:6},
 ];
-const socket = (typeof io==='function') ? io({transports:['websocket','polling']}) : null;
+let socket=null;
 const $=id=>document.getElementById(id);
-let room='',me='',isHost=false,state=null,localTimer=null;
-function setStatus(msg,good=false){ $('status').textContent=msg; $('status').style.color=good?'#357a55':'#a94d43'; }
-if(!socket){ setStatus('افتح اللعبة بواسطة START-MAZAD.bat وليس بفتح index.html مباشرة.'); $('create').disabled=true; $('join').disabled=true; }
-else { socket.on('connect',()=>{ setStatus('متصل بالسيرفر ✓',true); $('create').disabled=false; $('join').disabled=false; }); socket.on('connect_error',()=>{ setStatus('السيرفر غير متصل. أغلق اللعبة وافتح START-MAZAD.bat ثم انتظر حتى يفتح المتصفح.'); $('create').disabled=true; $('join').disabled=true; }); socket.on('disconnect',()=>{ setStatus('انقطع الاتصال بالسيرفر.'); }); }
+let room='',me='',isHost=false,state=null,localTimer=null,currentUser=null;
+function setStatus(msg,good=false){ if($('status')){$('status').textContent=msg;$('status').style.color=good?'#357a55':'#a94d43';} }
+function authMessage(msg,good=false){$('authMsg').textContent=msg;$('authMsg').style.color=good?'#357a55':'#a94d43';}
+async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw new Error(d.error||'حدث خطأ.');return d}
+function connectSocket(){
+ if(socket){try{socket.disconnect()}catch(e){}}
+ if(typeof io!=='function'){setStatus('تعذر تحميل Socket.IO.');return;}
+ socket=io({transports:['websocket','polling']});
+ socket.on('connect',()=>{setStatus('متصل بالسيرفر ✓',true);$('create').disabled=false;$('join').disabled=false;});
+ socket.on('connect_error',()=>{setStatus('تعذر الاتصال بالحساب أو السيرفر. سجّل الدخول ثم أعد المحاولة.');$('create').disabled=true;$('join').disabled=true;});
+ socket.on('disconnect',()=>{setStatus('انقطع الاتصال بالسيرفر.');});
+ socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
+ socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
+ socket.on('errorMsg',m=>setStatus(m));
+ socket.on('state',s=>{state=s;if(s&&s.phase==='auction')clearInterval(localTimer);renderState();});
+ socket.on('roundStarted',d=>{clearInterval(localTimer);show('game');if(state){state.phase='auction';state.turnEndsAt=d.turnEndsAt;renderAuction();}});
+ socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
+}
+function showAccountOnly(){ $('account').classList.remove('hidden');$('lobby').classList.add('hidden');$('game').classList.add('hidden');$('selection').classList.add('hidden');$('finalBattle').classList.add('hidden');}
+function showLoggedIn(){ $('authForms').classList.add('hidden');$('accountLogged').classList.remove('hidden');$('accountName').textContent=currentUser.username;$('lobby').classList.remove('hidden');connectSocket();}
+async function loadProfile(){try{const d=await api('/api/profile');const st=d.stats||{};$('profileStats').innerHTML=[['🎮','المباريات',st.games],['🏆','انتصارات',st.wins],['🥈','الثاني',st.second],['🥉','الثالث',st.third],['💰','إجمالي الصرف',st.totalSpent+' د.ك'],['⭐','متوسط النقاط',st.avgScore]].map(x=>`<div class="profile-stat"><div>${x[0]}</div><b>${x[2]}</b><span>${x[1]}</span></div>`).join('');$('profileResults').innerHTML=d.results?.length?d.results.slice(0,20).map(x=>`<div class="saved-row"><span>${new Date(x.created_at).toLocaleString('ar-KW')} — ${esc(x.category==='celebrities'?'مشاهير':'أفلام')}</span><b>${x.rank===1?'🥇':x.rank===2?'🥈':x.rank===3?'🥉':'#'+x.rank} ${esc(x.item_name)} — ${x.total_score}</b></div>`).join(''):'<div class="muted">لا توجد مباريات محفوظة بعد.</div>';$('profilePanel').classList.remove('hidden')}catch(e){authMessage(e.message)}}
+async function checkSession(){try{const d=await api('/api/auth/me');if(d.ok&&d.user){currentUser=d.user;showLoggedIn();return}}catch(e){}showAccountOnly()}
+$('loginBtn').onclick=async()=>{try{const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({username:$('loginUser').value.trim(),password:$('loginPass').value})});currentUser=d.user;authMessage('تم تسجيل الدخول ✓',true);showLoggedIn()}catch(e){authMessage(e.message)}};
+$('registerBtn').onclick=async()=>{try{const d=await api('/api/auth/register',{method:'POST',body:JSON.stringify({username:$('regUser').value.trim(),password:$('regPass').value})});currentUser=d.user;authMessage('تم إنشاء الحساب وحفظه ✓',true);showLoggedIn()}catch(e){authMessage(e.message)}};
+$('logoutBtn').onclick=async()=>{await api('/api/auth/logout',{method:'POST'}).catch(()=>{});try{socket?.disconnect()}catch(e){};socket=null;currentUser=null;location.reload()};
+$('profileBtn').onclick=()=>{if($('profilePanel').classList.contains('hidden'))loadProfile();else $('profilePanel').classList.add('hidden')};
+checkSession();
 function show(id){
   ['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
+  if($('account'))$('account').classList.toggle('hidden',id!=='lobby');
 }
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-$('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value,category:$('category').value});};
-$('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('joinName').value||'لاعب').trim();room=$('roomCode').value.trim().toUpperCase();socket.emit('joinRoom',{room,name:me});};
+$('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=currentUser?.username||($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value,category:$('category').value});};
+$('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=currentUser?.username||($('joinName').value||'لاعب').trim();room=$('roomCode').value.trim().toUpperCase();socket.emit('joinRoom',{room,name:me});};
 $('startGame').onclick=()=>socket.emit('startGame',{room});
 $('copyCode').onclick=async()=>{const value=$('code').textContent.trim();try{await navigator.clipboard.writeText(value);$('copyMsg').textContent='تم نسخ الكود ✓';}catch(e){$('shareCode').focus();$('shareCode').select();document.execCommand('copy');$('copyMsg').textContent='تم نسخ الكود ✓';}setTimeout(()=>$('copyMsg').textContent='',1800);};
-socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
-socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
-if(socket) socket.on('errorMsg',m=>setStatus(m));
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
 socket.on('state',s=>{
   state=s;
@@ -406,6 +447,7 @@ if(state.phase==='lobby'){enterRoom(state);return}
 if(state.phase==='auction'){
   clearInterval(localTimer);
   $('lobby').classList.add('hidden');
+  $('account').classList.add('hidden');
   $('game').classList.remove('hidden');
   $('selection').classList.add('hidden');
   $('finalBattle').classList.add('hidden');
@@ -492,7 +534,7 @@ $('cardDouble').onclick=()=>socket.emit('useCard',{room,type:'double'});
 $('cardReveal').onclick=()=>socket.emit('useCard',{room,type:'reveal'});
 $('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.players.findIndex(x=>x.id===socket.id)?'':i+1+'. '+p.name}`).filter(Boolean).join('\n');const pick=prompt('اكتب رقم اللاعب الذي تريد تجميده:\n'+names);const idx=Number(pick)-1;if(Number.isInteger(idx))socket.emit('useCard',{room,type:'freeze',target:idx});};
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
-function renderFinal(){
+function renderFinal(){saveFinalResults();renderSavedResults();
 const ranked=state.finalRanked||[];
 $('battleCards').innerHTML=ranked.map((x,i)=>`
 <div class="battle-card">
@@ -556,6 +598,22 @@ document.addEventListener('click', function(e){
     {boxShadow:'0 0 0 12px rgba(216,180,90,0)'}
   ],{duration:420,easing:'ease-out'});
 });
+
+async function saveFinalResults(){
+  if(!state?.finalRanked?.length)return;
+  // النتائج الأساسية تُحفظ تلقائيًا على الخادم عند انتهاء المواجهة.
+  if(currentUser){
+    try{const d=await api('/api/profile');window._mazadProfileResults=d.results||[];renderSavedResults();}catch(e){}
+  }
+}
+function renderSavedResults(){
+  const box=$('savedResults');if(!box)return;
+  const all=window._mazadProfileResults||[];
+  box.innerHTML='<div class="saved-results"><h3>☁️ نتائجي المحفوظة في حسابي</h3>'+
+  (all.length?all.slice(0,10).map((g,i)=>`<div class="saved-row"><span>${new Date(g.created_at).toLocaleString('ar-KW')} — ${esc(g.category==='celebrities'?'مشاهير':'أفلام')}</span><b>${g.rank===1?'🥇':g.rank===2?'🥈':g.rank===3?'🥉':'#'+g.rank} ${esc(g.item_name)} (${g.total_score})</b></div>`).join(''):'<div class="muted">سيظهر سجل مبارياتك هنا بعد انتهاء المباراة.</div>')+'</div>';
+}
+$('homeBtn').onclick=goHome;
+$('clearScoresBtn').onclick=()=>{localStorage.removeItem('mazadResults_v1');renderSavedResults();};
 </script>
 
 
