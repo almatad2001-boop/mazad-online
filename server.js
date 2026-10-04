@@ -275,10 +275,10 @@ const celebrities = [
   {id:'actor-176',name:"Winona Ryder",year:2026,rating:8.6,baseValue:350,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:6}
 ];
 const rooms=new Map(); function code(){let s;do{s='MZ'+Math.floor(1000+Math.random()*9000)}while(rooms.has(s));return s}
-function pub(r){return {phase:r.phase,category:r.category,players:r.players.map(p=>({id:p.id,userId:p.userId,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked,finalHistory:r.finalHistory||[]}};
+function pub(r){return {phase:r.phase,category:r.category,players:r.players.map(p=>({id:p.id,userId:p.userId,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,selectionTurnUserId:r.selectionTurnUserId,finalRanked:r.finalRanked,finalHistory:r.finalHistory||[]}};
 function broadcast(r){io.to(r.room).emit('state',pub(r));}
 function getR(s){return rooms.get(s.room)}
-function startAuction(r){if(r.round>=r.rounds){r.phase='selection';r.selectionTurnId=r.players.find(p=>p.films.length)?.id||null;r.players.forEach(p=>p.selectedFilmId=null);broadcast(r);return}const f={...r.pool[r.round++]};f.value=Math.max(30,Math.round(f.baseValue*(0.82+Math.random()*0.36)/10)*10);r.film=f;r.highest=0;r.leader=-1;r.players.forEach(p=>p.active=true);r.current=0;r.turnEndsAt=Date.now()+15000;broadcast(r);setTimeout(()=>turnTimeout(r.room),15050)}
+function startAuction(r){if(r.round>=r.rounds){r.phase='selection';r.selectionTurnUserId=r.players.find(p=>p.films.length)?.userId||null;r.players.forEach(p=>p.selectedFilmId=null);broadcast(r);return}const f={...r.pool[r.round++]};f.value=Math.max(30,Math.round(f.baseValue*(0.82+Math.random()*0.36)/10)*10);r.film=f;r.highest=0;r.leader=-1;r.players.forEach(p=>p.active=true);r.current=0;r.turnEndsAt=Date.now()+15000;broadcast(r);setTimeout(()=>turnTimeout(r.room),15050)}
 function nextActive(r,from){for(let k=1;k<=r.players.length;k++){const i=(from+k)%r.players.length;if(r.players[i].active&&i!==r.leader)return i}return -1}
 function turnTimeout(room){const r=rooms.get(room);if(!r||r.phase!=='auction'||Date.now()<r.turnEndsAt-100)return;if(r.leader===r.current||!r.players[r.current].active)return actionWithdraw(r,r.players[r.current].id);actionWithdraw(r,r.players[r.current].id)}
 function restartTimer(r){r.turnEndsAt=Date.now()+15000;const room=r.room;setTimeout(()=>turnTimeout(room),15050);}
@@ -324,6 +324,23 @@ socket.on('bid',d=>{
   }catch(e){console.error('bid handler failed',e);socket.emit('errorMsg','حدث خطأ أثناء المزايدة. حاول مرة أخرى.');}
 });
 socket.on('withdraw',d=>{const r=getR(d);if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');const p=r.players.find(x=>x.userId===socket.user?.id);if(!p)return socket.emit('errorMsg','لم يتم العثور على لاعبك في هذه الغرفة.');actionWithdraw(r,p.id)});
-socket.on('selectFilm',d=>{const r=getR(d);if(!r||r.phase!=='selection'||r.selectionTurnId!==socket.id)return;const p=r.players.find(x=>x.id===socket.id);const f=p?.films?.[+d.index];if(!f)return;p.selectedFilmId=f.id||`${p.id}-${d.index}-${f.name}`;r.selectionTurnId=r.players.find(x=>x.films.length&&!x.selectedFilmId)?.id||null;if(!r.selectionTurnId)void makeFinal(r);else broadcast(r)});
+socket.on('selectFilm',d=>{
+  try{
+    const r=getR(d);
+    if(!r) return socket.emit('errorMsg','الغرفة غير موجودة أو انتهت.');
+    if(r.phase!=='selection') return socket.emit('errorMsg','مرحلة اختيار المواجهة لم تبدأ بعد.');
+    if(!socket.user?.id) return socket.emit('errorMsg','انتهت جلسة الحساب. سجّل الدخول من جديد.');
+    if(String(r.selectionTurnUserId)!==String(socket.user.id)) return socket.emit('errorMsg','ليس دورك لاختيار الفيلم الآن.');
+    const p=r.players.find(x=>String(x.userId)===String(socket.user.id));
+    if(!p) return socket.emit('errorMsg','لم يتم العثور على لاعبك في الغرفة.');
+    const idx=Number(d?.index);
+    const f=p.films?.[idx];
+    if(!f) return socket.emit('errorMsg','الفيلم المختار غير موجود.');
+    p.selectedFilmId=f.id||`${p.userId}-${idx}-${f.name}`;
+    r.selectionTurnUserId=r.players.find(x=>x.films.length&&!x.selectedFilmId)?.userId||null;
+    socket.emit('selectionAccepted',{film:f.name});
+    if(!r.selectionTurnUserId) void makeFinal(r); else broadcast(r);
+  }catch(e){console.error('selectFilm handler failed',e);socket.emit('errorMsg','حدث خطأ أثناء اختيار الفيلم. حاول مرة أخرى.');}
+});
 socket.on('disconnect',()=>{for(const r of rooms.values()){const i=r.players.findIndex(p=>p.id===socket.id);if(i>=0&&r.phase!=='final'){const name=r.players[i].name;r.players.splice(i,1);if(r.players.length<2){r.phase='lobby'}if(r.hostId===socket.id&&r.players[0])r.hostId=r.players[0].id;broadcast(r);io.to(r.room).emit('disconnectedPlayer',name);}}});});
 const PORT=process.env.PORT||3000;server.listen(PORT,'0.0.0.0',()=>console.log(`Mazad Online running on http://localhost:${PORT}`));
