@@ -145,6 +145,13 @@ button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#f
 .awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.award{background:#fff;border:1px solid #ddd5c8;border-radius:18px;padding:16px}.award .emoji{font-size:30px}.analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.metric{background:#fff;border:1px solid #ddd5c8;border-radius:16px;padding:14px}.metric b{font-size:23px;display:block;margin-top:4px}
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #ddd5c8}.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.mini{background:#fff;border:1px solid #ddd5c8;border-radius:14px;overflow:hidden}.mini img{width:100%;aspect-ratio:2/3;object-fit:cover}.mini div{padding:8px}.stars{color:#b18a42}.hidden{display:none!important}
 .room-code{font-size:42px;letter-spacing:7px;font-weight:900;text-align:center;background:#eee9df;border:2px dashed #416b73;border-radius:18px;padding:18px;margin:14px 0;direction:ltr}.copyrow{display:flex;gap:8px;align-items:stretch}.copyrow button{min-width:130px}.copyok{color:#357a55;font-weight:bold;min-height:22px}.battle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.battle-card{background:#fff;border:1px solid #ddd5c8;border-radius:20px;overflow:hidden}.battle-card img{width:100%;aspect-ratio:2/3;object-fit:cover}}.battle-fallback{aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:30px;font-weight:900;color:var(--gold);background:rgba(7,27,23,.95)}.battle-body{padding:15px}.scoreline{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee5d9}.total-score{font-size:30px;font-weight:900;color:#416b73;margin-top:10px}.champion{background:#e2f0e7;border:2px solid #357a55;border-radius:20px;padding:22px;text-align:center;font-size:28px;font-weight:900}.pick-btn{width:100%;margin-top:8px}.selected{outline:3px solid #416b73}.formula{background:#eee9df;border-radius:14px;padding:13px;margin-top:12px}.final-table{margin-top:16px;overflow:auto}.final-table table{min-width:650px}@media(max-width:800px){.auction{grid-template-columns:1fr}.poster{max-width:290px;margin:auto}.buttons{grid-template-columns:repeat(2,1fr)}}
+
+<style>
+.special-panel{margin-top:14px;padding:12px;border:1px solid rgba(216,180,90,.28);border-radius:16px;background:rgba(5,18,15,.75)}
+.special-panel h3{color:#f0d98b;margin-bottom:8px}.card-actions{display:flex;gap:7px;flex-wrap:wrap}.card-actions button{font-size:13px;padding:9px 11px}
+.event-box{margin:10px 0;padding:12px;border:1px solid rgba(216,180,90,.35);border-radius:14px;background:rgba(216,180,90,.08);color:#f7f2e7}
+.secret-box{margin:10px 0;padding:16px;border:2px solid #d8b45a;border-radius:16px;background:rgba(216,180,90,.1);text-align:center}
+</style>
 </style><body>
 <div class="wrap">
 <section id="lobby" class="card">
@@ -163,7 +170,16 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 <div class="card"><div class="row" style="align-items:center;justify-content:space-between"><div><b>الغرفة:</b> <span id="gameCode"></span></div><div id="phaseLabel" class="turn"></div></div></div>
 <div class="auction">
 <div class="card"><div id="poster" class="poster"></div></div>
-<div class="card"><div class="muted"><span id="itemTypeLabel">الفيلم</span> <span id="roundNo"></span></div><div id="itemTitle" class="title"></div><div id="tags" class="tags"></div><div id="rarity" class="rarity"></div><div class="muted" style="margin-top:7px">⭐ التقييم والقيمة الحقيقية مخفيان</div><div id="turn" class="turn"></div><div id="timer" class="timer">15</div><div id="price" class="price">0 د.ك</div><div class="buttons"><button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button></div><div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="زيادة 10–500"><button id="customBtn">مزايدة</button></div><button id="worth" class="danger" style="width:100%">يستاهل — انسحب</button></div></div>
+<div class="card"><div class="muted"><span id="itemTypeLabel">الفيلم</span> <span id="roundNo"></span></div><div id="itemTitle" class="title"></div><div id="tags" class="tags"></div><div id="rarity" class="rarity"></div><div class="muted" style="margin-top:7px">⭐ التقييم والقيمة الحقيقية مخفيان</div><div id="turn" class="turn"></div><div id="timer" class="timer">15</div><div id="price" class="price">0 د.ك</div><div class="buttons"><button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button></div><div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="زيادة 10–500"><button id="customBtn">مزايدة</button></div><div id="specialPanel" class="special-panel">
+<h3>🃏 البطاقات الخاصة</h3>
+<div class="card-actions">
+<button id="cardDouble">⚡ مضاعفة <span id="doubleCount">1</span></button>
+<button id="cardFreeze">🛑 تجميد <span id="freezeCount">1</span></button>
+<button id="cardReveal">👀 كشف القيمة <span id="revealCount">1</span></button>
+</div>
+<div id="cardHint" class="muted" style="margin-top:7px">لكل لاعب بطاقة واحدة من كل نوع.</div>
+</div>
+<button id="worth" class="danger" style="width:100%">يستاهل — انسحب</button></div></div>
 <div class="card"><h2>اللاعبون</h2><div id="players" class="players"></div></div><div class="card"><h2>سجل المشتريات</h2><div id="log" class="log"></div></div>
 </section>
 
@@ -437,10 +453,44 @@ async function loadPoster(img,f){
 function posterHTML(f,cls=''){
   return `<img class="${cls}" alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}" onerror="loadPoster(this,${JSON.stringify(f).replace(/</g,'\u003c')})">`;
 }
-function renderAuction(){const f=state.film; $('itemTypeLabel').textContent=state.category==='celebrities'?'المشهور':'الفيلم';$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year||''}</span><span class="tag">${f.genre||'مشهور عالمي'}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`${posterHTML(f)}<div class="fallback" style="display:none">${esc(f.name)}</div>`;const first=$('poster').querySelector('img');loadPoster(first,f);$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
-function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
+function renderAuction(){
+ const f=state.film;$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;
+ $('tags').innerHTML=`<span class="tag">${f.year}</span><span class="tag">${f.genre}</span>`;
+ $('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;
+ $('poster').innerHTML=`${posterHTML(f)}<div class="fallback" style="display:none">${esc(f.name)}</div>`;
+ const first=$('poster').querySelector('img');loadPoster(first,f);
+ $('price').textContent=state.phase==='secret'?'مزاد سري':' '+state.highest+' د.ك';
+ const ev=state.currentEvent||{name:'جولة عادية',desc:'لا يوجد تأثير خاص.'};
+ $('turn').innerHTML=`${state.phase==='secret'?'🔒 مزاد سري — ضع عرضك السري':'دور: '+(state.players[state.current]?.name||'')}${state.phase==='auction'&&state.leader>=0?' | أعلى مزايد: '+state.players[state.leader].name+' — '+state.highest+' د.ك':''}`;
+ $('phaseLabel').textContent=state.phase==='secret'?'مزاد سري 🔒':'المزاد';
+ let evbox=document.getElementById('eventBox'); if(!evbox){evbox=document.createElement('div');evbox.id='eventBox';evbox.className='event-box';$('turn').after(evbox)}
+ evbox.innerHTML=`🎲 <b>${esc(ev.name)}</b><br><span>${esc(ev.desc)}</span>`;
+ $('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}">
+ <b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br>
+ <span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span>
+ ${p.frozenUntil&&p.frozenUntil>Date.now()?'<br><span class="status out">🛑 مجمّد</span>':''}</div>`).join('');
+ $('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';
+ const mine=state.players.find(p=>p.id===socket.id); if(!mine)return;
+ ['double','freeze','reveal'].forEach(t=>{const el=$(t==='double'?'doubleCount':t==='freeze'?'freezeCount':'revealCount');if(el)el.textContent=mine.cards?.[t]??0});
+ const myIdx=state.players.findIndex(p=>p.id===socket.id);
+ const myTurn=state.phase==='auction'&&myIdx===state.current;
+ const canBid=state.phase==='auction'&&myTurn&&mine.active&&state.leader!==state.current&&(!mine.frozenUntil||mine.frozenUntil<=Date.now());
+ document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);
+ $('worth').disabled=!myTurn||state.leader===state.current||!mine.active;
+ $('cardDouble').disabled=!(canBid&&mine.cards?.double>0);
+ $('cardReveal').disabled=!(mine.cards?.reveal>0);
+ $('cardFreeze').disabled=!(mine.cards?.freeze>0&&state.players.some((p,i)=>i!==myIdx&&p.active));
+ if(state.phase==='secret'){
+   document.querySelectorAll('[data-inc],#customBtn,#worth,#cardDouble,#cardFreeze,#cardReveal').forEach(b=>b.disabled=true);
+ }
+ startCountdown();
+}
+function startCountdown(){clearInterval(localTimer);let end=state.phase==='secret'?state.secretEndsAt:state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
 function bid(v){socket.emit('bid',{room,value:v});}
 document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
+$('cardDouble').onclick=()=>socket.emit('useCard',{room,type:'double'});
+$('cardReveal').onclick=()=>socket.emit('useCard',{room,type:'reveal'});
+$('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.players.findIndex(x=>x.id===socket.id)?'':i+1+'. '+p.name}`).filter(Boolean).join('\n');const pick=prompt('اكتب رقم اللاعب الذي تريد تجميده:\n'+names);const idx=Number(pick)-1;if(Number.isInteger(idx))socket.emit('useCard',{room,type:'freeze',target:idx});};
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
 function renderFinal(){
 const ranked=state.finalRanked||[];
