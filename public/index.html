@@ -8,7 +8,7 @@
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:38px;font-weight:900}.badge{background:#dbe7e8;padding:8px 14px;border-radius:30px}
 .card{background:#fbf8f1;border:1px solid #ddd5c8;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 25px #00000009}h1,h2,h3{margin:0 0 10px}.muted{color:#777}
 .row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:190px}label{display:block;font-weight:bold;margin:8px 0}input,select{width:100%;padding:13px;border:1px solid #d5cec2;border-radius:13px;font:inherit;background:#fff}
-button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
+button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
 .auction{display:grid;grid-template-columns:350px 1fr;gap:18px}.poster{aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:#293031;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.fallback{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:32px;font-weight:bold;padding:20px;background:#455f63}
 .title{font-size:38px;font-weight:900}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tag{background:#e7e1d6;padding:7px 10px;border-radius:20px}.rating{font-size:22px;font-weight:bold}.timer{text-align:center;font-size:52px;font-weight:900}.price{text-align:center;font-size:42px;font-weight:900;color:#416b73}.turn{background:#dbe7e8;padding:13px;border-radius:15px;text-align:center;font-weight:bold;margin:12px 0}
 .buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
@@ -134,7 +134,7 @@ body:after{
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:38px;font-weight:900}.badge{background:#dbe7e8;padding:8px 14px;border-radius:30px}
 .card{background:#fbf8f1;border:1px solid #ddd5c8;border-radius:24px;padding:22px;margin-bottom:16px;box-shadow:0 8px 25px #00000009}h1,h2,h3{margin:0 0 10px}.muted{color:#777}
 .row{display:flex;gap:12px;flex-wrap:wrap}.field{flex:1;min-width:190px}label{display:block;font-weight:bold;margin:8px 0}input,select{width:100%;padding:13px;border:1px solid #d5cec2;border-radius:13px;font:inherit;background:#fff}
-button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
+button{border:0;border-radius:13px;padding:12px 16px;background:#416b73;color:#fff;font-weight:bold;font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.35}.danger{background:#a94d43}.secondary{background:#ddd8cf;color:#252622}
 .auction{display:grid;grid-template-columns:350px 1fr;gap:18px}.poster{aspect-ratio:2/3;border-radius:20px;overflow:hidden;background:#293031;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.fallback{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:32px;font-weight:bold;padding:20px;background:#455f63}
 .title{font-size:38px;font-weight:900}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.tag{background:#e7e1d6;padding:7px 10px;border-radius:20px}.rating{font-size:22px;font-weight:bold}.timer{text-align:center;font-size:52px;font-weight:900}.price{text-align:center;font-size:42px;font-weight:900;color:#416b73}.turn{background:#dbe7e8;padding:13px;border-radius:15px;text-align:center;font-weight:bold;margin:12px 0}
 .buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.custom{display:flex;gap:8px;margin:10px 0}.custom input{flex:1}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.player{padding:13px;background:#fff;border:1px solid #ddd5c8;border-radius:16px}.player.turn{border:2px solid #416b73}.player.leader{border:2px solid #357a55}.player.out{opacity:.5}.status{display:inline-block;margin-top:7px;padding:5px 8px;border-radius:20px;font-size:12px}.in{background:#e2f0e7;color:#357a55}.lead{background:#e2f0e7;color:#357a55}.out{background:#f5dfdc;color:#a94d43}
@@ -396,6 +396,7 @@ function connectSocket(){
  socket.on('connect',()=>{setStatus('متصل بالسيرفر ✓',true);$('create').disabled=false;$('join').disabled=false;});
  socket.on('connect_error',e=>{setStatus('تعذر الاتصال بالسيرفر: '+(e?.message||'خطأ اتصال'));$('create').disabled=true;$('join').disabled=true;});
  socket.on('bidAccepted',d=>{setStatus('تمت المزايدة ✓ — أعلى سعر الآن '+d.amount+' د.ك',true);});
+ socket.on('selectionAccepted',d=>{setStatus('تم اختيار '+(d?.film||'الفيلم')+' ✓',true);});
  socket.on('disconnect',()=>{setStatus('انقطع الاتصال بالسيرفر.');});
  socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
  socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
@@ -527,7 +528,27 @@ bindAuctionControls();
 $('cardDouble').onclick=()=>socket.emit('useCard',{room,type:'double'});
 $('cardReveal').onclick=()=>socket.emit('useCard',{room,type:'reveal'});
 $('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.players.findIndex(x=>x.name===currentUser?.username)?'':i+1+'. '+p.name}`).filter(Boolean).join('\n');const pick=prompt('اكتب رقم اللاعب الذي تريد تجميده:\n'+names);const idx=Number(pick)-1;if(Number.isInteger(idx))socket.emit('useCard',{room,type:'freeze',target:idx});};
-function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
+function renderSelection(){
+  const uid=String(currentUser?.id||'');
+  const p=state.players.find(x=>String(x.userId)===uid)||state.players.find(x=>x.id===socket?.id);
+  const myTurn=String(state.selectionTurnUserId||'')===uid || (!state.selectionTurnUserId && state.selectionTurnId===socket?.id);
+  $('phaseLabel').textContent='اختيار المواجهة';
+  $('selectionPlayer').textContent=myTurn?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';
+  if(p&&!p.selectedFilmId){
+    $('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button type="button" class="pick-btn" data-pick="${i}" ${myTurn?'':'disabled'}>اختيار هذا الفيلم</button></div></div>`).join('');
+    p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});
+    document.querySelectorAll('[data-pick]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        if(b.disabled)return;
+        const idx=Number(b.dataset.pick);
+        b.disabled=true;
+        b.textContent='جاري الاختيار…';
+        socket.emit('selectFilm',{room,index:idx});
+      },{once:true});
+    });
+  }else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}
+  $('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;
+}
 function renderFinal(){saveFinalResults();renderSavedResults();
 const ranked=state.finalRanked||[];
 $('battleCards').innerHTML=ranked.map((x,i)=>`
