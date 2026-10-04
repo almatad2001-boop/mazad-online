@@ -148,10 +148,10 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 </style><body>
 <div class="wrap">
 <section id="lobby" class="card">
-<h1>مزاد الأفلام 🎬</h1>
+<h1>مزاد 🎬⭐</h1>
 <p class="muted">نسخة أونلاين — أنشئ غرفة وشارك الكود مع أصدقائك.</p>
 <div id="lobbyForms">
-<div class="row"><div class="field"><label>اسمك</label><input id="myName" maxlength="20" value="عبدالله"></div><div class="field"><label>عدد اللاعبين</label><select id="playerCount"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div><div class="field"><label>الميزانية</label><input id="budget" type="number" min="20" value="500"></div><div class="field"><label>عدد الأفلام</label><select id="rounds"><option>4</option><option>6</option><option selected>8</option></select></div></div>
+<div class="row"><div class="field"><label>الفئة</label><select id="category"><option value="films" selected>🎬 أفلام</option><option value="celebrities">🎬 مشاهير ممثلين عالميين</option></select></div><div class="field"><label>اسمك</label><input id="myName" maxlength="20" value="عبدالله"></div><div class="field"><label>عدد اللاعبين</label><select id="playerCount"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div><div class="field"><label>الميزانية</label><input id="budget" type="number" min="20" value="500"></div><div class="field"><label>عدد الأفلام</label><select id="rounds"><option>4</option><option>6</option><option selected>8</option></select></div></div>
 <div class="buttons"><button id="create">إنشاء غرفة</button></div>
 <hr><div class="row"><div class="field"><label>كود الغرفة</label><input id="roomCode" maxlength="8" placeholder="مثال: MZ4821"></div><div class="field"><label>اسمك</label><input id="joinName" maxlength="20" placeholder="اسم اللاعب"></div></div><button id="join">دخول غرفة</button>
 </div>
@@ -163,7 +163,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 <div class="card"><div class="row" style="align-items:center;justify-content:space-between"><div><b>الغرفة:</b> <span id="gameCode"></span></div><div id="phaseLabel" class="turn"></div></div></div>
 <div class="auction">
 <div class="card"><div id="poster" class="poster"></div></div>
-<div class="card"><div class="muted">الفيلم <span id="roundNo"></span></div><div id="itemTitle" class="title"></div><div id="tags" class="tags"></div><div id="rarity" class="rarity"></div><div class="muted" style="margin-top:7px">⭐ التقييم والقيمة الحقيقية مخفيان</div><div id="turn" class="turn"></div><div id="timer" class="timer">15</div><div id="price" class="price">0 د.ك</div><div class="buttons"><button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button></div><div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="زيادة 10–500"><button id="customBtn">مزايدة</button></div><button id="worth" class="danger" style="width:100%">يستاهل — انسحب</button></div></div>
+<div class="card"><div class="muted"><span id="itemTypeLabel">الفيلم</span> <span id="roundNo"></span></div><div id="itemTitle" class="title"></div><div id="tags" class="tags"></div><div id="rarity" class="rarity"></div><div class="muted" style="margin-top:7px">⭐ التقييم والقيمة الحقيقية مخفيان</div><div id="turn" class="turn"></div><div id="timer" class="timer">15</div><div id="price" class="price">0 د.ك</div><div class="buttons"><button data-inc="10">+10</button><button data-inc="20">+20</button><button data-inc="50">+50</button><button data-inc="100">+100</button></div><div class="custom"><input id="custom" type="number" min="10" max="500" step="10" placeholder="زيادة 10–500"><button id="customBtn">مزايدة</button></div><button id="worth" class="danger" style="width:100%">يستاهل — انسحب</button></div></div>
 <div class="card"><h2>اللاعبون</h2><div id="players" class="players"></div></div><div class="card"><h2>سجل المشتريات</h2><div id="log" class="log"></div></div>
 </section>
 
@@ -173,6 +173,180 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+const celebrities = [
+{id:'celebrity-0',name:'Cristiano Ronaldo',year:2026,rating:7.5,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:0},
+{id:'celebrity-1',name:'Lionel Messi',year:2026,rating:8.2,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:1},
+{id:'celebrity-2',name:'LeBron James',year:2026,rating:8.9,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:2},
+{id:'celebrity-3',name:'Michael Jordan',year:2026,rating:9.6,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:3},
+{id:'celebrity-4',name:'Stephen Curry',year:2026,rating:7.8,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:4},
+{id:'celebrity-5',name:'Kevin Durant',year:2026,rating:8.5,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:5},
+{id:'celebrity-6',name:'Tom Brady',year:2026,rating:9.2,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:6},
+{id:'celebrity-7',name:'Patrick Mahomes',year:2026,rating:9.9,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:7},
+{id:'celebrity-8',name:'Tiger Woods',year:2026,rating:8.1,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:8},
+{id:'celebrity-9',name:'Roger Federer',year:2026,rating:8.8,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:0},
+{id:'celebrity-10',name:'Rafael Nadal',year:2026,rating:9.5,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:1},
+{id:'celebrity-11',name:'Novak Djokovic',year:2026,rating:7.7,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:2},
+{id:'celebrity-12',name:'Serena Williams',year:2026,rating:8.4,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:3},
+{id:'celebrity-13',name:'Usain Bolt',year:2026,rating:9.1,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:4},
+{id:'celebrity-14',name:'Conor McGregor',year:2026,rating:9.8,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:5},
+{id:'celebrity-15',name:'Khabib Nurmagomedov',year:2026,rating:8.0,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:6},
+{id:'celebrity-16',name:'Neymar',year:2026,rating:8.7,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:7},
+{id:'celebrity-17',name:'Kylian Mbappe',year:2026,rating:9.4,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:8},
+{id:'celebrity-18',name:'Virat Kohli',year:2026,rating:7.6,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:0},
+{id:'celebrity-19',name:'Sachin Tendulkar',year:2026,rating:8.3,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:1},
+{id:'celebrity-20',name:'Lewis Hamilton',year:2026,rating:9.0,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:2},
+{id:'celebrity-21',name:'Max Verstappen',year:2026,rating:9.7,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:3},
+{id:'celebrity-22',name:'Simone Biles',year:2026,rating:7.9,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:4},
+{id:'celebrity-23',name:"Shaquille O'Neal",year:2026,rating:8.6,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:5},
+{id:'celebrity-24',name:'Kobe Bryant',year:2026,rating:9.3,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:6},
+{id:'celebrity-25',name:'David Beckham',year:2026,rating:7.5,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:7},
+{id:'celebrity-26',name:'Zlatan Ibrahimovic',year:2026,rating:8.2,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:8},
+{id:'celebrity-27',name:'Mike Tyson',year:2026,rating:8.9,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:0},
+{id:'celebrity-28',name:'Floyd Mayweather',year:2026,rating:9.6,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:1},
+{id:'celebrity-29',name:'Muhammad Ali',year:2026,rating:7.8,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:2},
+{id:'celebrity-30',name:'Dwayne Johnson',year:2026,rating:8.5,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:3},
+{id:'celebrity-31',name:'Arnold Schwarzenegger',year:2026,rating:9.2,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:4},
+{id:'celebrity-32',name:'Jason Statham',year:2026,rating:9.9,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:5},
+{id:'celebrity-33',name:'Tom Cruise',year:2026,rating:8.1,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:6},
+{id:'celebrity-34',name:'Leonardo DiCaprio',year:2026,rating:8.8,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:7},
+{id:'celebrity-35',name:'Brad Pitt',year:2026,rating:9.5,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:8},
+{id:'celebrity-36',name:'Johnny Depp',year:2026,rating:7.7,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:0},
+{id:'celebrity-37',name:'Robert Downey Jr.',year:2026,rating:8.4,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:1},
+{id:'celebrity-38',name:'Chris Hemsworth',year:2026,rating:9.1,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:2},
+{id:'celebrity-39',name:'Chris Evans',year:2026,rating:9.8,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:3},
+{id:'celebrity-40',name:'Ryan Reynolds',year:2026,rating:8.0,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:4},
+{id:'celebrity-41',name:'Ryan Gosling',year:2026,rating:8.7,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:5},
+{id:'celebrity-42',name:'Will Smith',year:2026,rating:9.4,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:6},
+{id:'celebrity-43',name:'Keanu Reeves',year:2026,rating:7.6,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:7},
+{id:'celebrity-44',name:'Tom Hanks',year:2026,rating:8.3,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:8},
+{id:'celebrity-45',name:'George Clooney',year:2026,rating:9.0,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:0},
+{id:'celebrity-46',name:'Matt Damon',year:2026,rating:9.7,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:1},
+{id:'celebrity-47',name:'Ben Affleck',year:2026,rating:7.9,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:2},
+{id:'celebrity-48',name:'Christian Bale',year:2026,rating:8.6,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:3},
+{id:'celebrity-49',name:'Hugh Jackman',year:2026,rating:9.3,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:4},
+{id:'celebrity-50',name:'Henry Cavill',year:2026,rating:7.5,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:5},
+{id:'celebrity-51',name:'Jason Momoa',year:2026,rating:8.2,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:6},
+{id:'celebrity-52',name:'Pedro Pascal',year:2026,rating:8.9,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:7},
+{id:'celebrity-53',name:'Joaquin Phoenix',year:2026,rating:9.6,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:8},
+{id:'celebrity-54',name:'Al Pacino',year:2026,rating:7.8,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:0},
+{id:'celebrity-55',name:'Robert De Niro',year:2026,rating:8.5,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:1},
+{id:'celebrity-56',name:'Morgan Freeman',year:2026,rating:9.2,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:2},
+{id:'celebrity-57',name:'Samuel L. Jackson',year:2026,rating:9.9,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:3},
+{id:'celebrity-58',name:'Jackie Chan',year:2026,rating:8.1,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:4},
+{id:'celebrity-59',name:'Jet Li',year:2026,rating:8.8,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:5},
+{id:'celebrity-60',name:'Bruce Lee',year:2026,rating:9.5,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:6},
+{id:'celebrity-61',name:'Sylvester Stallone',year:2026,rating:7.7,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:7},
+{id:'celebrity-62',name:'Jean-Claude Van Damme',year:2026,rating:8.4,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:8},
+{id:'celebrity-63',name:'Jim Carrey',year:2026,rating:9.1,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:0},
+{id:'celebrity-64',name:'Rowan Atkinson',year:2026,rating:9.8,baseValue:160,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:1},
+{id:'celebrity-65',name:'Steve Carell',year:2026,rating:8.0,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:2},
+{id:'celebrity-66',name:'Adam Sandler',year:2026,rating:8.7,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:3},
+{id:'celebrity-67',name:'Eddie Murphy',year:2026,rating:9.4,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:4},
+{id:'celebrity-68',name:'Kevin Hart',year:2026,rating:7.6,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:5},
+{id:'celebrity-69',name:'Jack Black',year:2026,rating:8.3,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:6},
+{id:'celebrity-70',name:'Gordon Ramsay',year:2026,rating:9.0,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:7},
+{id:'celebrity-71',name:'Simon Cowell',year:2026,rating:9.7,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:8},
+{id:'celebrity-72',name:'Oprah Winfrey',year:2026,rating:7.9,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:0},
+{id:'celebrity-73',name:'Ellen DeGeneres',year:2026,rating:8.6,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:1},
+{id:'celebrity-74',name:'Jimmy Fallon',year:2026,rating:9.3,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:2},
+{id:'celebrity-75',name:'Trevor Noah',year:2026,rating:7.5,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:3},
+{id:'celebrity-76',name:'Kim Kardashian',year:2026,rating:8.2,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:4},
+{id:'celebrity-77',name:'Kylie Jenner',year:2026,rating:8.9,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:5},
+{id:'celebrity-78',name:'Kendall Jenner',year:2026,rating:9.6,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:6},
+{id:'celebrity-79',name:'Paris Hilton',year:2026,rating:7.8,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:7},
+{id:'celebrity-80',name:'MrBeast',year:2026,rating:8.5,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:8},
+{id:'celebrity-81',name:'PewDiePie',year:2026,rating:9.2,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:0},
+{id:'celebrity-82',name:'Logan Paul',year:2026,rating:9.9,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:1},
+{id:'celebrity-83',name:'Jake Paul',year:2026,rating:8.1,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:2},
+{id:'celebrity-84',name:'Khaby Lame',year:2026,rating:8.8,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:3},
+{id:'celebrity-85',name:"Charli D'Amelio",year:2026,rating:9.5,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:4},
+{id:'celebrity-86',name:'Addison Rae',year:2026,rating:7.7,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:5},
+{id:'celebrity-87',name:'Taylor Swift',year:2026,rating:8.4,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:6},
+{id:'celebrity-88',name:'Beyonce',year:2026,rating:9.1,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:7},
+{id:'celebrity-89',name:'Rihanna',year:2026,rating:9.8,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:8},
+{id:'celebrity-90',name:'Adele',year:2026,rating:8.0,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:0},
+{id:'celebrity-91',name:'Lady Gaga',year:2026,rating:8.7,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:1},
+{id:'celebrity-92',name:'Ariana Grande',year:2026,rating:9.4,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:2},
+{id:'celebrity-93',name:'Selena Gomez',year:2026,rating:7.6,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:3},
+{id:'celebrity-94',name:'Justin Bieber',year:2026,rating:8.3,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:4},
+{id:'celebrity-95',name:'Ed Sheeran',year:2026,rating:9.0,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:5},
+{id:'celebrity-96',name:'Drake',year:2026,rating:9.7,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:6},
+{id:'celebrity-97',name:'The Weeknd',year:2026,rating:7.9,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:7},
+{id:'celebrity-98',name:'Bruno Mars',year:2026,rating:8.6,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:8},
+{id:'celebrity-99',name:'Eminem',year:2026,rating:9.3,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:0},
+{id:'celebrity-100',name:'Snoop Dogg',year:2026,rating:7.5,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:1},
+{id:'celebrity-101',name:'Jay-Z',year:2026,rating:8.2,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:2},
+{id:'celebrity-102',name:'Kanye West',year:2026,rating:8.9,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:3},
+{id:'celebrity-103',name:'Kendrick Lamar',year:2026,rating:9.6,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:4},
+{id:'celebrity-104',name:'Travis Scott',year:2026,rating:7.8,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:5},
+{id:'celebrity-105',name:'Post Malone',year:2026,rating:8.5,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:6},
+{id:'celebrity-106',name:'Billie Eilish',year:2026,rating:9.2,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:7},
+{id:'celebrity-107',name:'Miley Cyrus',year:2026,rating:9.9,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:8},
+{id:'celebrity-108',name:'Dua Lipa',year:2026,rating:8.1,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:0},
+{id:'celebrity-109',name:'Harry Styles',year:2026,rating:8.8,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:1},
+{id:'celebrity-110',name:'Shakira',year:2026,rating:9.5,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:2},
+{id:'celebrity-111',name:'Jennifer Lopez',year:2026,rating:7.7,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:3},
+{id:'celebrity-112',name:'Nicki Minaj',year:2026,rating:8.4,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:4},
+{id:'celebrity-113',name:'Cardi B',year:2026,rating:9.1,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:5},
+{id:'celebrity-114',name:'Megan Thee Stallion',year:2026,rating:9.8,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:6},
+{id:'celebrity-115',name:'Doja Cat',year:2026,rating:8.0,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:7},
+{id:'celebrity-116',name:'Katy Perry',year:2026,rating:8.7,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:8},
+{id:'celebrity-117',name:'Britney Spears',year:2026,rating:9.4,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:0},
+{id:'celebrity-118',name:'Christina Aguilera',year:2026,rating:7.6,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:1},
+{id:'celebrity-119',name:'Madonna',year:2026,rating:8.3,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:2},
+{id:'celebrity-120',name:'Celine Dion',year:2026,rating:9.0,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:3},
+{id:'celebrity-121',name:'Mariah Carey',year:2026,rating:9.7,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:4},
+{id:'celebrity-122',name:'Justin Timberlake',year:2026,rating:7.9,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:5},
+{id:'celebrity-123',name:'Usher',year:2026,rating:8.6,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:6},
+{id:'celebrity-124',name:'50 Cent',year:2026,rating:9.3,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:7},
+{id:'celebrity-125',name:'Akon',year:2026,rating:7.5,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:8},
+{id:'celebrity-126',name:'Pitbull',year:2026,rating:8.2,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:0},
+{id:'celebrity-127',name:'Jason Derulo',year:2026,rating:8.9,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:1},
+{id:'celebrity-128',name:'BTS',year:2026,rating:9.6,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:2},
+{id:'celebrity-129',name:'Jungkook',year:2026,rating:7.8,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:3},
+{id:'celebrity-130',name:'Jimin',year:2026,rating:8.5,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:4},
+{id:'celebrity-131',name:'V',year:2026,rating:9.2,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:5},
+{id:'celebrity-132',name:'RM',year:2026,rating:9.9,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:6},
+{id:'celebrity-133',name:'Blackpink',year:2026,rating:8.1,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:7},
+{id:'celebrity-134',name:'Lisa',year:2026,rating:8.8,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:8},
+{id:'celebrity-135',name:'Jennie',year:2026,rating:9.5,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:0},
+{id:'celebrity-136',name:'Rosé',year:2026,rating:7.7,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:1},
+{id:'celebrity-137',name:'Jisoo',year:2026,rating:8.4,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:2},
+{id:'celebrity-138',name:'Zayn Malik',year:2026,rating:9.1,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:3},
+{id:'celebrity-139',name:'Bad Bunny',year:2026,rating:9.8,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:4},
+{id:'celebrity-140',name:'Daddy Yankee',year:2026,rating:8.0,baseValue:120,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:5},
+{id:'celebrity-141',name:'Maluma',year:2026,rating:8.7,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:6},
+{id:'celebrity-142',name:'Karol G',year:2026,rating:9.4,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:7},
+{id:'celebrity-143',name:'Anitta',year:2026,rating:7.6,baseValue:50,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:8},
+{id:'celebrity-144',name:'Shah Rukh Khan',year:2026,rating:8.3,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:0},
+{id:'celebrity-145',name:'Amitabh Bachchan',year:2026,rating:9.0,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:1},
+{id:'celebrity-146',name:'Priyanka Chopra',year:2026,rating:9.7,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:2},
+{id:'celebrity-147',name:'Deepika Padukone',year:2026,rating:7.9,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:3},
+{id:'celebrity-148',name:'Aishwarya Rai',year:2026,rating:8.6,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:4},
+{id:'celebrity-149',name:'Salman Khan',year:2026,rating:9.3,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:5},
+{id:'celebrity-150',name:'Aamir Khan',year:2026,rating:7.5,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:6},
+{id:'celebrity-151',name:'Hrithik Roshan',year:2026,rating:8.2,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:7},
+{id:'celebrity-152',name:'Rajinikanth',year:2026,rating:8.9,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:8},
+{id:'celebrity-153',name:'Alia Bhatt',year:2026,rating:9.6,baseValue:100,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:0},
+{id:'celebrity-154',name:'Zendaya',year:2026,rating:7.8,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:1},
+{id:'celebrity-155',name:'Sydney Sweeney',year:2026,rating:8.5,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:70,awards:2},
+{id:'celebrity-156',name:'Margot Robbie',year:2026,rating:9.2,baseValue:150,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:3},
+{id:'celebrity-157',name:'Emma Stone',year:2026,rating:9.9,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:4},
+{id:'celebrity-158',name:'Emma Watson',year:2026,rating:8.1,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:5},
+{id:'celebrity-159',name:'Jennifer Lawrence',year:2026,rating:8.8,baseValue:80,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:6},
+{id:'celebrity-160',name:'Anne Hathaway',year:2026,rating:9.5,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:7},
+{id:'celebrity-161',name:'Scarlett Johansson',year:2026,rating:7.7,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:8},
+{id:'celebrity-162',name:'Angelina Jolie',year:2026,rating:8.4,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:0},
+{id:'celebrity-163',name:'Natalie Portman',year:2026,rating:9.1,baseValue:140,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:1},
+{id:'celebrity-164',name:'Gal Gadot',year:2026,rating:9.8,baseValue:40,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:2},
+{id:'celebrity-165',name:'Millie Bobby Brown',year:2026,rating:8.0,baseValue:60,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:3},
+{id:'celebrity-166',name:'Jenna Ortega',year:2026,rating:8.7,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:4},
+{id:'celebrity-167',name:'Anya Taylor-Joy',year:2026,rating:9.4,baseValue:90,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:71,awards:5},
+{id:'celebrity-168',name:'Florence Pugh',year:2026,rating:7.6,baseValue:110,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:6},
+{id:'celebrity-169',name:'Timothée Chalamet',year:2026,rating:8.3,baseValue:130,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:7},
+{id:'celebrity-170',name:'Denzel Washington',year:2026,rating:8.5,baseValue:80,genre:'مشهور عالمي',rarity:'نادر',rarityClass:'rare',img:'',fame:96,awards:7},
+{id:'celebrity-171',name:'Sergio Ramos',year:2026,rating:8.2,baseValue:70,genre:'مشهور عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:6},
+];
 const socket = (typeof io==='function') ? io({transports:['websocket','polling']}) : null;
 const $=id=>document.getElementById(id);
 let room='',me='',isHost=false,state=null,localTimer=null;
@@ -183,7 +357,7 @@ function show(id){
   ['lobby','game','selection','finalBattle'].forEach(x=>$(x).classList.toggle('hidden',x!==id));
 }
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-$('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value});};
+$('create').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('myName').value||'لاعب').trim();socket.emit('createRoom',{name:me,budget:+$('budget').value,playerCount:+$('playerCount').value,rounds:+$('rounds').value,category:$('category').value});};
 $('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر غير متصل. شغّل START-MAZAD.bat أولًا.');return;}me=($('joinName').value||'لاعب').trim();room=$('roomCode').value.trim().toUpperCase();socket.emit('joinRoom',{room,name:me});};
 $('startGame').onclick=()=>socket.emit('startGame',{room});
 $('copyCode').onclick=async()=>{const value=$('code').textContent.trim();try{await navigator.clipboard.writeText(value);$('copyMsg').textContent='تم نسخ الكود ✓';}catch(e){$('shareCode').focus();$('shareCode').select();document.execCommand('copy');$('copyMsg').textContent='تم نسخ الكود ✓';}setTimeout(()=>$('copyMsg').textContent='',1800);};
@@ -256,7 +430,7 @@ async function loadPoster(img,f){
 function posterHTML(f,cls=''){
   return `<img class="${cls}" alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}" onerror="loadPoster(this,${JSON.stringify(f).replace(/</g,'\u003c')})">`;
 }
-function renderAuction(){const f=state.film;$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year}</span><span class="tag">${f.genre}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`${posterHTML(f)}<div class="fallback">${esc(f.name)}</div>`;const first=$('poster').querySelector('img');loadPoster(first,f);$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
+function renderAuction(){const f=state.film; $('itemTypeLabel').textContent=state.category==='celebrities'?'المشهور':'الفيلم';$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year||''}</span><span class="tag">${f.genre||'مشهور عالمي'}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`${posterHTML(f)}<div class="fallback">${esc(f.name)}</div>`;const first=$('poster').querySelector('img');loadPoster(first,f);$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
 function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
 function bid(v){socket.emit('bid',{room,value:v});}
 document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
