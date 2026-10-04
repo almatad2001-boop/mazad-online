@@ -301,8 +301,26 @@ io.use(async(socket,next)=>{
 io.on('connection',socket=>{socket.on('createRoom',d=>{const category=d.category==='celebrities'?'celebrities':'films';const source=category==='celebrities'?celebrities:films;const r={room:code(),phase:'lobby',category,hostId:socket.id,budget:Math.max(20,+d.budget||500),playerCount:Math.min(6,Math.max(2,+d.playerCount||4)),rounds:Math.min(source.length,Math.min(100,Math.max(2,Math.floor(+d.rounds||8)))),players:[{id:socket.id,userId:socket.user.id,name:socket.user.username,balance:0,spent:0,films:[],active:true}],pool:[],round:0,history:[],gameId:crypto.randomUUID(),resultsSaved:false};r.players[0].balance=r.budget;rooms.set(r.room,r);socket.join(r.room);socket.emit('roomCreated',{room:r.room,state:pub(r)})});
 socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');r.players.push({id:socket.id,userId:socket.user.id,name:socket.user.username,balance:r.budget,spent:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
 socket.on('startGame',d=>{const r=getR(d);if(!r||socket.id!==r.hostId||r.phase!=='lobby')return;if(r.players.length<2)return socket.emit('errorMsg','يجب دخول لاعبين على الأقل.');const source=r.category==='celebrities'?celebrities:films;r.pool=source.slice().sort(()=>Math.random()-.5).slice(0,r.rounds);r.phase='auction';r.round=0;startAuction(r)});
-socket.on('bid',d=>{const r=getR(d);if(!r||r.phase!=='auction'||r.players[r.current]?.id!==socket.id||r.current===r.leader)return;const v=+d.value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0)return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');const p=r.players[r.current],np=r.highest+v;if(np>p.balance)return socket.emit('errorMsg','لا يمكنك تجاوز محفظتك.');r.leader=r.current;r.highest=np;r.current=nextActive(r,r.current);if(r.current<0)sell(r);else restartTimer(r),broadcast(r)});
-socket.on('withdraw',d=>{const r=getR(d);if(r)actionWithdraw(r,socket.id)});
+socket.on('bid',d=>{
+  const r=getR(d);
+  if(!r) return socket.emit('errorMsg','الغرفة غير موجودة أو انتهت.');
+  if(r.phase!=='auction') return socket.emit('errorMsg','المزاد ليس في مرحلة المزايدة الآن.');
+  const current=r.players[r.current];
+  if(!current) return socket.emit('errorMsg','لا يوجد دور مزايدة حالي.');
+  if(current.userId!==socket.user?.id) return socket.emit('errorMsg','ليس دورك الآن — انتظر حتى يظهر دورك.');
+  if(r.current===r.leader) return socket.emit('errorMsg','أنت أعلى مزايد حاليًا ولا يمكنك المزايدة على نفسك.');
+  if(!current.active) return socket.emit('errorMsg','لقد انسحبت من هذه الجولة.');
+  const v=Number(d.value);
+  if(!Number.isInteger(v)||v<10||v>500||v%10!==0) return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');
+  const np=r.highest+v;
+  if(np>current.balance) return socket.emit('errorMsg',`رصيدك لا يكفي. المطلوب ${np} د.ك، ورصيدك ${current.balance} د.ك.`);
+  r.leader=r.current;
+  r.highest=np;
+  r.current=nextActive(r,r.current);
+  socket.emit('bidAccepted',{amount:np});
+  if(r.current<0) sell(r); else { restartTimer(r); broadcast(r); }
+});
+socket.on('withdraw',d=>{const r=getR(d);if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');const p=r.players.find(x=>x.userId===socket.user?.id);if(!p)return socket.emit('errorMsg','لم يتم العثور على لاعبك في هذه الغرفة.');actionWithdraw(r,p.id)});
 socket.on('selectFilm',d=>{const r=getR(d);if(!r||r.phase!=='selection'||r.selectionTurnId!==socket.id)return;const p=r.players.find(x=>x.id===socket.id);const f=p?.films?.[+d.index];if(!f)return;p.selectedFilmId=f.id||`${p.id}-${d.index}-${f.name}`;r.selectionTurnId=r.players.find(x=>x.films.length&&!x.selectedFilmId)?.id||null;if(!r.selectionTurnId)void makeFinal(r);else broadcast(r)});
 socket.on('disconnect',()=>{for(const r of rooms.values()){const i=r.players.findIndex(p=>p.id===socket.id);if(i>=0&&r.phase!=='final'){const name=r.players[i].name;r.players.splice(i,1);if(r.players.length<2){r.phase='lobby'}if(r.hostId===socket.id&&r.players[0])r.hostId=r.players[0].id;broadcast(r);io.to(r.room).emit('disconnectedPlayer',name);}}});});
 const PORT=process.env.PORT||3000;server.listen(PORT,'0.0.0.0',()=>console.log(`Mazad Online running on http://localhost:${PORT}`));
