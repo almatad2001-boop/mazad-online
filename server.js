@@ -75,71 +75,203 @@ films.forEach((f,i)=>{
   if(!f.id) f.id='film-'+i;
 });
 const cinema={'The Dark Knight':{fame:99,awards:3,awardText:'فاز بأوسكار + 8 ترشيحات'},'Inception':{fame:97,awards:5,awardText:'4 أوسكارات + 8 ترشيحات'},'Interstellar':{fame:96,awards:1,awardText:'أوسكار + 5 ترشيحات'},'The Godfather':{fame:100,awards:6,awardText:'3 أوسكارات + 7 ترشيحات'},'Fight Club':{fame:94,awards:0,awardText:'ترشيحات وجوائز نقدية دون أوسكار'},'Forrest Gump':{fame:99,awards:8,awardText:'6 أوسكارات + 13 ترشيحًا'},'Gladiator':{fame:98,awards:6,awardText:'5 أوسكارات + 12 ترشيحًا'},'The Matrix':{fame:99,awards:5,awardText:'4 أوسكارات + جوائز تقنية متعددة'}};
+const celebrities = [
+  {id:'actor-0',name:"Leonardo DiCaprio",year:2026,rating:7.2,baseValue:40,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:0},
+  {id:'actor-1',name:"Tom Hanks",year:2026,rating:7.3,baseValue:140,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:1},
+  {id:'actor-2',name:"Brad Pitt",year:2026,rating:7.4,baseValue:240,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:2},
+  {id:'actor-3',name:"Johnny Depp",year:2026,rating:7.5,baseValue:340,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:3},
+  {id:'actor-4',name:"Robert De Niro",year:2026,rating:7.6,baseValue:440,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:4},
+  {id:'actor-5',name:"Al Pacino",year:2026,rating:7.7,baseValue:540,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:5},
+  {id:'actor-6',name:"Denzel Washington",year:2026,rating:7.8,baseValue:640,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:6},
+  {id:'actor-7',name:"Morgan Freeman",year:2026,rating:7.9,baseValue:740,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:7},
+  {id:'actor-8',name:"Keanu Reeves",year:2026,rating:8.0,baseValue:840,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:8},
+  {id:'actor-9',name:"Christian Bale",year:2026,rating:8.1,baseValue:940,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:9},
+  {id:'actor-10',name:"Will Smith",year:2026,rating:8.2,baseValue:130,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:0},
+  {id:'actor-11',name:"Tom Cruise",year:2026,rating:8.3,baseValue:230,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:1},
+  {id:'actor-12',name:"Matt Damon",year:2026,rating:8.4,baseValue:330,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:2},
+  {id:'actor-13',name:"Ryan Gosling",year:2026,rating:8.5,baseValue:430,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:3},
+  {id:'actor-14',name:"Ryan Reynolds",year:2026,rating:8.6,baseValue:530,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:4},
+  {id:'actor-15',name:"Hugh Jackman",year:2026,rating:8.7,baseValue:630,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:5},
+  {id:'actor-16',name:"Arnold Schwarzenegger",year:2026,rating:8.8,baseValue:730,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:6},
+  {id:'actor-17',name:"Sylvester Stallone",year:2026,rating:8.9,baseValue:830,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:7},
+  {id:'actor-18',name:"Jason Statham",year:2026,rating:7.2,baseValue:930,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:8},
+  {id:'actor-19',name:"Jackie Chan",year:2026,rating:7.3,baseValue:120,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:9},
+  {id:'actor-20',name:"Jet Li",year:2026,rating:7.4,baseValue:220,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:0},
+  {id:'actor-21',name:"Bruce Willis",year:2026,rating:7.5,baseValue:320,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:1},
+  {id:'actor-22',name:"Jim Carrey",year:2026,rating:7.6,baseValue:420,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:2},
+  {id:'actor-23',name:"Adam Sandler",year:2026,rating:7.7,baseValue:520,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:3},
+  {id:'actor-24',name:"Chris Hemsworth",year:2026,rating:7.8,baseValue:620,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:4},
+  {id:'actor-25',name:"Chris Evans",year:2026,rating:7.9,baseValue:720,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:5},
+  {id:'actor-26',name:"Chris Pratt",year:2026,rating:8.0,baseValue:820,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:6},
+  {id:'actor-27',name:"Mark Ruffalo",year:2026,rating:8.1,baseValue:920,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:7},
+  {id:'actor-28',name:"Jeremy Renner",year:2026,rating:8.2,baseValue:110,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:8},
+  {id:'actor-29',name:"Robert Downey Jr.",year:2026,rating:8.3,baseValue:210,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:9},
+  {id:'actor-30',name:"Benedict Cumberbatch",year:2026,rating:8.4,baseValue:310,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:0},
+  {id:'actor-31',name:"Joaquin Phoenix",year:2026,rating:8.5,baseValue:410,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:1},
+  {id:'actor-32',name:"Jake Gyllenhaal",year:2026,rating:8.6,baseValue:510,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:2},
+  {id:'actor-33',name:"Edward Norton",year:2026,rating:8.7,baseValue:610,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:3},
+  {id:'actor-34',name:"Bradley Cooper",year:2026,rating:8.8,baseValue:710,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:4},
+  {id:'actor-35',name:"Jared Leto",year:2026,rating:8.9,baseValue:810,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:5},
+  {id:'actor-36',name:"Matthew McConaughey",year:2026,rating:7.2,baseValue:910,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:6},
+  {id:'actor-37',name:"George Clooney",year:2026,rating:7.3,baseValue:100,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:7},
+  {id:'actor-38',name:"Michael Fassbender",year:2026,rating:7.4,baseValue:200,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:8},
+  {id:'actor-39',name:"Oscar Isaac",year:2026,rating:7.5,baseValue:300,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:9},
+  {id:'actor-40',name:"Pedro Pascal",year:2026,rating:7.6,baseValue:400,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:0},
+  {id:'actor-41',name:"Javier Bardem",year:2026,rating:7.7,baseValue:500,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:1},
+  {id:'actor-42',name:"Antonio Banderas",year:2026,rating:7.8,baseValue:600,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:2},
+  {id:'actor-43',name:"Jean Reno",year:2026,rating:7.9,baseValue:700,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:3},
+  {id:'actor-44',name:"Mads Mikkelsen",year:2026,rating:8.0,baseValue:800,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:4},
+  {id:'actor-45',name:"Gary Oldman",year:2026,rating:8.1,baseValue:900,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:5},
+  {id:'actor-46',name:"Colin Firth",year:2026,rating:8.2,baseValue:90,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:6},
+  {id:'actor-47',name:"Hugh Grant",year:2026,rating:8.3,baseValue:190,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:7},
+  {id:'actor-48',name:"Ewan McGregor",year:2026,rating:8.4,baseValue:290,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:8},
+  {id:'actor-49',name:"Daniel Craig",year:2026,rating:8.5,baseValue:390,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:9},
+  {id:'actor-50',name:"Pierce Brosnan",year:2026,rating:8.6,baseValue:490,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:0},
+  {id:'actor-51',name:"Liam Neeson",year:2026,rating:8.7,baseValue:590,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:1},
+  {id:'actor-52',name:"Ralph Fiennes",year:2026,rating:8.8,baseValue:690,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:2},
+  {id:'actor-53',name:"Colin Farrell",year:2026,rating:8.9,baseValue:790,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:3},
+  {id:'actor-54',name:"Cillian Murphy",year:2026,rating:7.2,baseValue:890,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:4},
+  {id:'actor-55',name:"Barry Keoghan",year:2026,rating:7.3,baseValue:80,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:5},
+  {id:'actor-56',name:"Paul Mescal",year:2026,rating:7.4,baseValue:180,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:6},
+  {id:'actor-57',name:"Timothée Chalamet",year:2026,rating:7.5,baseValue:280,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:7},
+  {id:'actor-58',name:"Austin Butler",year:2026,rating:7.6,baseValue:380,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:8},
+  {id:'actor-59',name:"Andrew Garfield",year:2026,rating:7.7,baseValue:480,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:9},
+  {id:'actor-60',name:"Tom Holland",year:2026,rating:7.8,baseValue:580,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:0},
+  {id:'actor-61',name:"Daniel Radcliffe",year:2026,rating:7.9,baseValue:680,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:1},
+  {id:'actor-62',name:"Rupert Grint",year:2026,rating:8.0,baseValue:780,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:2},
+  {id:'actor-63',name:"Kit Harington",year:2026,rating:8.1,baseValue:880,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:3},
+  {id:'actor-64',name:"Orlando Bloom",year:2026,rating:8.2,baseValue:70,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:4},
+  {id:'actor-65',name:"Henry Cavill",year:2026,rating:8.3,baseValue:170,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:5},
+  {id:'actor-66',name:"Idris Elba",year:2026,rating:8.4,baseValue:270,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:6},
+  {id:'actor-67',name:"John Boyega",year:2026,rating:8.5,baseValue:370,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:7},
+  {id:'actor-68',name:"Michael B. Jordan",year:2026,rating:8.6,baseValue:470,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:8},
+  {id:'actor-69',name:"Chadwick Boseman",year:2026,rating:8.7,baseValue:570,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:9},
+  {id:'actor-70',name:"Forest Whitaker",year:2026,rating:8.8,baseValue:670,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:0},
+  {id:'actor-71',name:"Samuel L. Jackson",year:2026,rating:8.9,baseValue:770,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:1},
+  {id:'actor-72',name:"Laurence Fishburne",year:2026,rating:7.2,baseValue:870,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:2},
+  {id:'actor-73',name:"Wesley Snipes",year:2026,rating:7.3,baseValue:60,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:3},
+  {id:'actor-74',name:"Jamie Foxx",year:2026,rating:7.4,baseValue:160,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:4},
+  {id:'actor-75',name:"Don Cheadle",year:2026,rating:7.5,baseValue:260,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:5},
+  {id:'actor-76',name:"Mahershala Ali",year:2026,rating:7.6,baseValue:360,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:6},
+  {id:'actor-77',name:"Rami Malek",year:2026,rating:7.7,baseValue:460,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:7},
+  {id:'actor-78',name:"Dev Patel",year:2026,rating:7.8,baseValue:560,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:8},
+  {id:'actor-79',name:"Riz Ahmed",year:2026,rating:7.9,baseValue:660,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:9},
+  {id:'actor-80',name:"Ben Kingsley",year:2026,rating:8.0,baseValue:760,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:0},
+  {id:'actor-81',name:"Anthony Hopkins",year:2026,rating:8.1,baseValue:860,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:1},
+  {id:'actor-82',name:"Ian McKellen",year:2026,rating:8.2,baseValue:50,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:2},
+  {id:'actor-83',name:"Patrick Stewart",year:2026,rating:8.3,baseValue:150,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:3},
+  {id:'actor-84',name:"Christopher Walken",year:2026,rating:8.4,baseValue:250,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:4},
+  {id:'actor-85',name:"Jeff Bridges",year:2026,rating:8.5,baseValue:350,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:5},
+  {id:'actor-86',name:"Kevin Costner",year:2026,rating:8.6,baseValue:450,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:6},
+  {id:'actor-87',name:"Hugh Laurie",year:2026,rating:8.7,baseValue:550,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:7},
+  {id:'actor-88',name:"Jim Broadbent",year:2026,rating:8.8,baseValue:650,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:8},
+  {id:'actor-89',name:"Steve Carell",year:2026,rating:8.9,baseValue:750,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:9},
+  {id:'actor-90',name:"Bill Murray",year:2026,rating:7.2,baseValue:850,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:0},
+  {id:'actor-91',name:"Robin Williams",year:2026,rating:7.3,baseValue:40,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:1},
+  {id:'actor-92',name:"Jack Nicholson",year:2026,rating:7.4,baseValue:140,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:2},
+  {id:'actor-93',name:"Dustin Hoffman",year:2026,rating:7.5,baseValue:240,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:3},
+  {id:'actor-94',name:"Gene Hackman",year:2026,rating:7.6,baseValue:340,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:4},
+  {id:'actor-95',name:"Clint Eastwood",year:2026,rating:7.7,baseValue:440,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:5},
+  {id:'actor-96',name:"Mel Gibson",year:2026,rating:7.8,baseValue:540,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:6},
+  {id:'actor-97',name:"Russell Crowe",year:2026,rating:7.9,baseValue:640,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:7},
+  {id:'actor-98',name:"Jude Law",year:2026,rating:8.0,baseValue:740,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:8},
+  {id:'actor-99',name:"Joseph Gordon-Levitt",year:2026,rating:8.1,baseValue:840,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:9},
+  {id:'actor-100',name:"Channing Tatum",year:2026,rating:8.2,baseValue:940,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:0},
+  {id:'actor-101',name:"Jonah Hill",year:2026,rating:8.3,baseValue:130,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:1},
+  {id:'actor-102',name:"Seth Rogen",year:2026,rating:8.4,baseValue:230,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:2},
+  {id:'actor-103',name:"Paul Rudd",year:2026,rating:8.5,baseValue:330,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:3},
+  {id:'actor-104',name:"Jason Momoa",year:2026,rating:8.6,baseValue:430,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:4},
+  {id:'actor-105',name:"Dave Bautista",year:2026,rating:8.7,baseValue:530,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:5},
+  {id:'actor-106',name:"Vin Diesel",year:2026,rating:8.8,baseValue:630,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:6},
+  {id:'actor-107',name:"Dwayne Johnson",year:2026,rating:8.9,baseValue:730,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:7},
+  {id:'actor-108',name:"John Cena",year:2026,rating:7.2,baseValue:830,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:8},
+  {id:'actor-109',name:"Zac Efron",year:2026,rating:7.3,baseValue:930,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:9},
+  {id:'actor-110',name:"Chris Pine",year:2026,rating:7.4,baseValue:120,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:0},
+  {id:'actor-111',name:"Miles Teller",year:2026,rating:7.5,baseValue:220,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:1},
+  {id:'actor-112',name:"Margot Robbie",year:2026,rating:7.6,baseValue:320,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:2},
+  {id:'actor-113',name:"Scarlett Johansson",year:2026,rating:7.7,baseValue:420,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:3},
+  {id:'actor-114',name:"Angelina Jolie",year:2026,rating:7.8,baseValue:520,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:4},
+  {id:'actor-115',name:"Jennifer Lawrence",year:2026,rating:7.9,baseValue:620,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:5},
+  {id:'actor-116',name:"Emma Stone",year:2026,rating:8.0,baseValue:720,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:6},
+  {id:'actor-117',name:"Anne Hathaway",year:2026,rating:8.1,baseValue:820,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:7},
+  {id:'actor-118',name:"Natalie Portman",year:2026,rating:8.2,baseValue:920,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:8},
+  {id:'actor-119',name:"Meryl Streep",year:2026,rating:8.3,baseValue:110,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:9},
+  {id:'actor-120',name:"Nicole Kidman",year:2026,rating:8.4,baseValue:210,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:0},
+  {id:'actor-121',name:"Charlize Theron",year:2026,rating:8.5,baseValue:310,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:1},
+  {id:'actor-122',name:"Julia Roberts",year:2026,rating:8.6,baseValue:410,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:2},
+  {id:'actor-123',name:"Sandra Bullock",year:2026,rating:8.7,baseValue:510,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:3},
+  {id:'actor-124',name:"Cate Blanchett",year:2026,rating:8.8,baseValue:610,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:4},
+  {id:'actor-125',name:"Amy Adams",year:2026,rating:8.9,baseValue:710,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:5},
+  {id:'actor-126',name:"Viola Davis",year:2026,rating:7.2,baseValue:810,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:6},
+  {id:'actor-127',name:"Jodie Foster",year:2026,rating:7.3,baseValue:910,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:7},
+  {id:'actor-128',name:"Julianne Moore",year:2026,rating:7.4,baseValue:100,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:8},
+  {id:'actor-129',name:"Frances McDormand",year:2026,rating:7.5,baseValue:200,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:9},
+  {id:'actor-130',name:"Tilda Swinton",year:2026,rating:7.6,baseValue:300,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:0},
+  {id:'actor-131',name:"Michelle Yeoh",year:2026,rating:7.7,baseValue:400,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:1},
+  {id:'actor-132',name:"Salma Hayek",year:2026,rating:7.8,baseValue:500,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:2},
+  {id:'actor-133',name:"Penélope Cruz",year:2026,rating:7.9,baseValue:600,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:3},
+  {id:'actor-134',name:"Cameron Diaz",year:2026,rating:8.0,baseValue:700,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:4},
+  {id:'actor-135',name:"Reese Witherspoon",year:2026,rating:8.1,baseValue:800,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:5},
+  {id:'actor-136',name:"Jessica Chastain",year:2026,rating:8.2,baseValue:900,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:6},
+  {id:'actor-137',name:"Emily Blunt",year:2026,rating:8.3,baseValue:90,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:7},
+  {id:'actor-138',name:"Rachel McAdams",year:2026,rating:8.4,baseValue:190,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:8},
+  {id:'actor-139',name:"Natalie Dormer",year:2026,rating:8.5,baseValue:290,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:9},
+  {id:'actor-140',name:"Keira Knightley",year:2026,rating:8.6,baseValue:390,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:0},
+  {id:'actor-141',name:"Rosamund Pike",year:2026,rating:8.7,baseValue:490,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:1},
+  {id:'actor-142',name:"Naomi Watts",year:2026,rating:8.8,baseValue:590,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:2},
+  {id:'actor-143',name:"Eva Green",year:2026,rating:8.9,baseValue:690,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:3},
+  {id:'actor-144',name:"Marion Cotillard",year:2026,rating:7.2,baseValue:790,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:4},
+  {id:'actor-145',name:"Léa Seydoux",year:2026,rating:7.3,baseValue:890,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:5},
+  {id:'actor-146',name:"Saoirse Ronan",year:2026,rating:7.4,baseValue:80,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:6},
+  {id:'actor-147',name:"Florence Pugh",year:2026,rating:7.5,baseValue:180,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:7},
+  {id:'actor-148',name:"Anya Taylor-Joy",year:2026,rating:7.6,baseValue:280,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:75,awards:8},
+  {id:'actor-149',name:"Zendaya",year:2026,rating:7.7,baseValue:380,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:76,awards:9},
+  {id:'actor-150',name:"Emma Watson",year:2026,rating:7.8,baseValue:480,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:77,awards:0},
+  {id:'actor-151',name:"Emma Roberts",year:2026,rating:7.9,baseValue:580,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:78,awards:1},
+  {id:'actor-152',name:"Millie Bobby Brown",year:2026,rating:8.0,baseValue:680,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:79,awards:2},
+  {id:'actor-153',name:"Gal Gadot",year:2026,rating:8.1,baseValue:780,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:80,awards:3},
+  {id:'actor-154',name:"Ana de Armas",year:2026,rating:8.2,baseValue:880,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:81,awards:4},
+  {id:'actor-155',name:"Jennifer Aniston",year:2026,rating:8.3,baseValue:70,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:82,awards:5},
+  {id:'actor-156',name:"Courteney Cox",year:2026,rating:8.4,baseValue:170,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:83,awards:6},
+  {id:'actor-157',name:"Lisa Kudrow",year:2026,rating:8.5,baseValue:270,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:84,awards:7},
+  {id:'actor-158',name:"Kristen Stewart",year:2026,rating:8.6,baseValue:370,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:85,awards:8},
+  {id:'actor-159',name:"Kristen Bell",year:2026,rating:8.7,baseValue:470,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:86,awards:9},
+  {id:'actor-160',name:"Amanda Seyfried",year:2026,rating:8.8,baseValue:570,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:87,awards:0},
+  {id:'actor-161',name:"Mila Kunis",year:2026,rating:8.9,baseValue:670,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:88,awards:1},
+  {id:'actor-162',name:"Dakota Johnson",year:2026,rating:7.2,baseValue:770,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:89,awards:2},
+  {id:'actor-163',name:"Brie Larson",year:2026,rating:7.3,baseValue:870,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:90,awards:3},
+  {id:'actor-164',name:"Elizabeth Olsen",year:2026,rating:7.4,baseValue:60,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:91,awards:4},
+  {id:'actor-165',name:"Zoe Saldana",year:2026,rating:7.5,baseValue:160,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:92,awards:5},
+  {id:'actor-166',name:"Michelle Williams",year:2026,rating:7.6,baseValue:260,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:93,awards:6},
+  {id:'actor-167',name:"Halle Berry",year:2026,rating:7.7,baseValue:360,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:94,awards:7},
+  {id:'actor-168',name:"Regina King",year:2026,rating:7.8,baseValue:460,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:95,awards:8},
+  {id:'actor-169',name:"Taraji P. Henson",year:2026,rating:7.9,baseValue:560,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:96,awards:9},
+  {id:'actor-170',name:"Octavia Spencer",year:2026,rating:8.0,baseValue:660,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:97,awards:0},
+  {id:'actor-171',name:"Whoopi Goldberg",year:2026,rating:8.1,baseValue:760,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:98,awards:1},
+  {id:'actor-172',name:"Sigourney Weaver",year:2026,rating:8.2,baseValue:860,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:99,awards:2},
+  {id:'actor-173',name:"Linda Hamilton",year:2026,rating:8.3,baseValue:50,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:100,awards:3},
+  {id:'actor-174',name:"Demi Moore",year:2026,rating:8.4,baseValue:150,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:72,awards:4},
+  {id:'actor-175',name:"Sharon Stone",year:2026,rating:8.5,baseValue:250,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:73,awards:5},
+  {id:'actor-176',name:"Winona Ryder",year:2026,rating:8.6,baseValue:350,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:6}
+];
 const rooms=new Map(); function code(){let s;do{s='MZ'+Math.floor(1000+Math.random()*9000)}while(rooms.has(s));return s}
-function pub(r){return {phase:r.phase,players:r.players.map(p=>({id:p.id,name:p.name,balance:p.balance,spent:p.spent,bids:p.bids||0,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked}};
+function pub(r){return {phase:r.phase,category:r.category,players:r.players.map(p=>({id:p.id,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked}};
 function broadcast(r){io.to(r.room).emit('state',pub(r));}
 function getR(s){return rooms.get(s.room)}
-function startAuction(r){
-if(r.round>=r.rounds){
-  r.phase='selection';
-  r.selectionTurnId=r.players.find(p=>p.films.length)?.id||null;
-  r.players.forEach(p=>p.selectedFilmId=null);
-  r.turnEndsAt=null;
-  broadcast(r);
-  return;
-}
-const f={...r.pool[r.round++]};
-f.value=Math.max(30,Math.round(f.baseValue*(0.82+Math.random()*0.36)/10)*10);
-r.film=f;
-r.highest=0;
-r.leader=-1;
-r.players.forEach(p=>p.active=true);
-
-/* Fair rotation: every new film starts with the next player, regardless of who won the previous film. */
-let starter=-1;
-if(r.nextStarterId){
-  starter=r.players.findIndex(p=>p.id===r.nextStarterId);
-}
-if(starter<0) starter=(r.startIndex||0)%r.players.length;
-r.current=starter;
-r.startIndex=(starter+1)%r.players.length;
-r.nextStarterId=r.players[r.startIndex]?.id||r.players[0]?.id||null;
-
-r.turnEndsAt=Date.now()+15000;
-broadcast(r);
-setTimeout(()=>turnTimeout(r.room),15050)
-}
+function startAuction(r){if(r.round>=r.rounds){r.phase='selection';r.selectionTurnId=r.players.find(p=>p.films.length)?.id||null;r.players.forEach(p=>p.selectedFilmId=null);broadcast(r);return}const f={...r.pool[r.round++]};f.value=Math.max(30,Math.round(f.baseValue*(0.82+Math.random()*0.36)/10)*10);r.film=f;r.highest=0;r.leader=-1;r.players.forEach(p=>p.active=true);r.current=0;r.turnEndsAt=Date.now()+15000;broadcast(r);setTimeout(()=>turnTimeout(r.room),15050)}
 function nextActive(r,from){for(let k=1;k<=r.players.length;k++){const i=(from+k)%r.players.length;if(r.players[i].active&&i!==r.leader)return i}return -1}
 function turnTimeout(room){const r=rooms.get(room);if(!r||r.phase!=='auction'||Date.now()<r.turnEndsAt-100)return;if(r.leader===r.current||!r.players[r.current].active)return actionWithdraw(r,r.players[r.current].id);actionWithdraw(r,r.players[r.current].id)}
 function restartTimer(r){r.turnEndsAt=Date.now()+15000;const room=r.room;setTimeout(()=>turnTimeout(room),15050);}
 function actionWithdraw(r,id){const i=r.players.findIndex(p=>p.id===id);if(i<0||r.phase!=='auction'||i!==r.current||i===r.leader||!r.players[i].active)return;r.players[i].active=false;const others=r.players.filter((p,j)=>p.active&&j!==r.leader).length;if(others===0){if(r.leader>=0)sell(r);else noSale(r);return}r.current=nextActive(r,i);if(r.current<0){if(r.leader>=0)sell(r);else noSale(r);return}restartTimer(r);broadcast(r)}
-function sell(r){
-  const p=r.players[r.leader],paid=r.highest;
-  p.balance-=paid;
-  p.spent+=paid;
-  p.films.push({...r.film,price:paid,saving:r.film.value-paid});
-  r.history.push({film:r.film.name,player:p.name,price:paid});
-
-  // الانتقال مباشرة للفيلم التالي بدون شاشة تقييم أو انتظار.
-  r.pendingDeal=null;
-  r.phase='auction';
-  startAuction(r);
-}
-function noSale(r){
-  r.history.push({film:r.film.name,player:'لم يُبع',price:0});
-
-  // الانتقال مباشرة للفيلم التالي بدون شاشة تقييم أو انتظار.
-  r.pendingDeal=null;
-  r.phase='auction';
-  startAuction(r);
-}
-function finalScore(f){const c=cinema[f.name]||{fame:50,awards:0};return c.fame*.45+(f.rating/10*100)*.35+Math.min(c.awards*5,25)*.2*4}
-function makeFinal(r){const valid=r.players.filter(p=>p.films.some(f=>f.id===p.selectedFilmId));r.finalRanked=valid.map(p=>{const f=p.films.find(x=>x.id===p.selectedFilmId);const c=cinema[f.name]||{fame:50,awards:0,awardText:'بيانات محدودة'};return {player:p.name,film:f,fame:c.fame,awards:c.awards,awardText:c.awardText,total:finalScore(f)}}).sort((a,b)=>b.total-a.total);r.phase='final';broadcast(r)}
-io.on('connection',socket=>{socket.on('createRoom',d=>{const r={room:code(),phase:'lobby',hostId:socket.id,budget:Math.max(20,+d.budget||500),playerCount:Math.min(6,Math.max(2,+d.playerCount||4)),rounds:Math.min(films.length,Math.max(1,+d.rounds||8)),players:[{id:socket.id,name:String(d.name||'لاعب').slice(0,20),balance:0,spent:0,bids:0,films:[],active:true}],pool:[],round:0,history:[],startIndex:0,nextStarterId:null};r.players[0].balance=r.budget;rooms.set(r.room,r);socket.join(r.room);socket.emit('roomCreated',{room:r.room,state:pub(r)})});
-socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');r.players.push({id:socket.id,name:String(d.name||'لاعب').slice(0,20),balance:r.budget,spent:0,bids:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
-socket.on('startGame',d=>{const r=getR(d);if(!r||socket.id!==r.hostId||r.phase!=='lobby')return;if(r.players.length<2)return socket.emit('errorMsg','يجب دخول لاعبين على الأقل.');r.pool=films.slice().sort(()=>Math.random()-.5).slice(0,r.rounds);r.phase='auction';r.round=0;startAuction(r)});
-socket.on('bid',d=>{const r=getR(d);if(!r||r.phase!=='auction'||r.players[r.current]?.id!==socket.id||r.current===r.leader)return;const v=+d.value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0)return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');const p=r.players[r.current],np=r.highest+v;if(np>p.balance)return socket.emit('errorMsg','لا يمكنك تجاوز محفظتك.');r.leader=r.current;r.highest=np;r.players[r.current].bids=(r.players[r.current].bids||0)+1;r.current=nextActive(r,r.current);if(r.current<0)sell(r);else restartTimer(r),broadcast(r)});
+function sell(r){const p=r.players[r.leader],paid=r.highest;const saving=r.film.value-paid;p.balance-=paid;p.spent+=paid;p.films.push({...r.film,price:paid,saving});r.history.push({film:r.film.name,player:p.name,price:paid});r.phase='auction';startAuction(r)}
+function noSale(r){r.history.push({film:r.film.name,player:'لم يُبع',price:0});r.phase='auction';startAuction(r)}
+function finalScore(f){const c=cinema[f.name]||{fame:f.fame||50,awards:f.awards||0};return c.fame*.45+(f.rating/10*100)*.35+Math.min(c.awards*5,25)*.2*4}
+function makeFinal(r){const valid=r.players.filter(p=>p.films.some(f=>f.id===p.selectedFilmId));r.finalRanked=valid.map(p=>{const f=p.films.find(x=>x.id===p.selectedFilmId);const c=cinema[f.name]||{fame:f.fame||50,awards:f.awards||0,awardText:'بيانات الشهرة العالمية'};return {player:p.name,film:f,fame:c.fame,awards:c.awards,awardText:c.awardText,total:finalScore(f)}}).sort((a,b)=>b.total-a.total);r.phase='final';broadcast(r)}
+io.on('connection',socket=>{socket.on('createRoom',d=>{const category=d.category==='celebrities'?'celebrities':'films';const source=category==='celebrities'?celebrities:films;const r={room:code(),phase:'lobby',category,hostId:socket.id,budget:Math.max(20,+d.budget||500),playerCount:Math.min(6,Math.max(2,+d.playerCount||4)),rounds:Math.min(source.length,Math.max(1,+d.rounds||8)),players:[{id:socket.id,name:String(d.name||'لاعب').slice(0,20),balance:0,spent:0,films:[],active:true}],pool:[],round:0,history:[]};r.players[0].balance=r.budget;rooms.set(r.room,r);socket.join(r.room);socket.emit('roomCreated',{room:r.room,state:pub(r)})});
+socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');r.players.push({id:socket.id,name:String(d.name||'لاعب').slice(0,20),balance:r.budget,spent:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
+socket.on('startGame',d=>{const r=getR(d);if(!r||socket.id!==r.hostId||r.phase!=='lobby')return;if(r.players.length<2)return socket.emit('errorMsg','يجب دخول لاعبين على الأقل.');const source=r.category==='celebrities'?celebrities:films;r.pool=source.slice().sort(()=>Math.random()-.5).slice(0,r.rounds);r.phase='auction';r.round=0;startAuction(r)});
+socket.on('bid',d=>{const r=getR(d);if(!r||r.phase!=='auction'||r.players[r.current]?.id!==socket.id||r.current===r.leader)return;const v=+d.value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0)return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');const p=r.players[r.current],np=r.highest+v;if(np>p.balance)return socket.emit('errorMsg','لا يمكنك تجاوز محفظتك.');r.leader=r.current;r.highest=np;r.current=nextActive(r,r.current);if(r.current<0)sell(r);else restartTimer(r),broadcast(r)});
 socket.on('withdraw',d=>{const r=getR(d);if(r)actionWithdraw(r,socket.id)});
 socket.on('selectFilm',d=>{const r=getR(d);if(!r||r.phase!=='selection'||r.selectionTurnId!==socket.id)return;const p=r.players.find(x=>x.id===socket.id);const f=p?.films?.[+d.index];if(!f)return;p.selectedFilmId=f.id||`${p.id}-${d.index}-${f.name}`;r.selectionTurnId=r.players.find(x=>x.films.length&&!x.selectedFilmId)?.id||null;if(!r.selectionTurnId)makeFinal(r);else broadcast(r)});
-socket.on('disconnect',()=>{for(const r of rooms.values()){const i=r.players.findIndex(p=>p.id===socket.id);if(i>=0&&r.phase!=='final'){const name=r.players[i].name;if(r.nextStarterId===socket.id)r.nextStarterId=null;r.players.splice(i,1);if(r.players.length<2){r.phase='lobby'}if(r.hostId===socket.id&&r.players[0])r.hostId=r.players[0].id;broadcast(r);io.to(r.room).emit('disconnectedPlayer',name);}}});});
+socket.on('disconnect',()=>{for(const r of rooms.values()){const i=r.players.findIndex(p=>p.id===socket.id);if(i>=0&&r.phase!=='final'){const name=r.players[i].name;r.players.splice(i,1);if(r.players.length<2){r.phase='lobby'}if(r.hostId===socket.id&&r.players[0])r.hostId=r.players[0].id;broadcast(r);io.to(r.room).emit('disconnectedPlayer',name);}}});});
 const PORT=process.env.PORT||3000;server.listen(PORT,'0.0.0.0',()=>console.log(`Mazad Online running on http://localhost:${PORT}`));
