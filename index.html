@@ -396,7 +396,8 @@ function connectSocket(){
  socket.on('connect',()=>{setStatus('متصل بالسيرفر ✓',true);$('create').disabled=false;$('join').disabled=false;});
  socket.on('connect_error',e=>{setStatus('تعذر الاتصال بالسيرفر: '+(e?.message||'خطأ اتصال'));$('create').disabled=true;$('join').disabled=true;});
  socket.on('bidAccepted',d=>{setStatus('تمت المزايدة ✓ — أعلى سعر الآن '+d.amount+' د.ك',true);});
- socket.on('selectionAccepted',d=>{setStatus('تم اختيار '+(d?.film||'الفيلم')+' ✓',true);});
+ socket.on('selectionAccepted',d=>{setStatus('تم اختيار '+(d?.film||'الفيلم')+' ✓',true); if(state){ renderState(); }});
+ socket.on('selectionError',d=>{setStatus(d?.error||'تعذر اختيار الفيلم. حاول مرة أخرى.');renderSelection();});
  socket.on('disconnect',()=>{setStatus('انقطع الاتصال بالسيرفر.');});
  socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
  socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
@@ -531,29 +532,42 @@ $('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.p
 function renderSelection(){
   const uid=String(currentUser?.id||'');
   const p=state.players.find(x=>String(x.userId)===uid)||state.players.find(x=>x.id===socket?.id);
-  const myTurn=String(state.selectionTurnUserId||'')===uid || (!state.selectionTurnUserId && state.selectionTurnId===socket?.id);
+  const myTurn=(String(state.selectionTurnUserId||'')===uid) || (!state.selectionTurnUserId && String(state.selectionTurnId||'')===String(socket?.id||''));
   $('phaseLabel').textContent='اختيار المواجهة';
   $('selectionPlayer').textContent=myTurn?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';
   if(p&&!p.selectedFilmId){
     $('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button type="button" class="pick-btn" data-pick="${i}" ${myTurn?'':'disabled'}>اختيار هذا الفيلم</button></div></div>`).join('');
     p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});
     document.querySelectorAll('[data-pick]').forEach(b=>{
-      b.addEventListener('click',()=>{
-        if(b.disabled)return;
+      b.onclick=async()=>{
+        if(b.disabled||!socket?.connected)return;
         const idx=Number(b.dataset.pick);
         const oldText=b.textContent;
         b.disabled=true;
         b.textContent='جاري الاختيار…';
-        setStatus('جاري إرسال الاختيار للسيرفر…');
-        socket.emit('selectFilm',{room,index:idx},(res)=>{
-          if(res?.ok) return;
+        setStatus('جاري حفظ اختيارك…');
+        const buttons=[...document.querySelectorAll('[data-pick]')];
+        buttons.forEach(x=>x.disabled=true);
+        try{
+          const res=await api('/api/game/select-film',{method:'POST',body:JSON.stringify({room,index:idx})});
+          if(!res?.ok)throw new Error(res?.error||'تعذر اختيار الفيلم.');
+          setStatus('تم اختيار '+(res.film||'الفيلم')+' ✓',true);
+          // The server broadcasts the new state. Render immediately as a fallback.
+          if(res.finished){return;}
+          renderSelection();
+        }catch(e){
           b.disabled=false;
           b.textContent=oldText;
-          setStatus(res?.error||'تعذر اختيار الفيلم. حاول مرة أخرى.');
-        });
-      });
+          buttons.forEach(x=>{if(x.dataset.pick!==b.dataset.pick)x.disabled=false;});
+          setStatus(e.message||'تعذر اختيار الفيلم. حاول مرة أخرى.');
+        }
+      };
     });
-  }else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}
+  }else if(p&&p.selectedFilmId){
+    $('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';
+  }else{
+    $('selectionMovies').innerHTML='<p class="muted">تعذر العثور على لاعبك. أعد تحميل الصفحة.</p>';
+  }
   $('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;
 }
 function renderFinal(){saveFinalResults();renderSavedResults();
