@@ -412,6 +412,8 @@ function posterPlaceholder(title){
   return 'https://placehold.co/500x750/071b17/d8b45a?text='+encodeURIComponent(String(title));
 }
 async function loadPoster(img,f){
+  const fallback=img?.parentElement?.querySelector('.fallback');
+  if(fallback) fallback.style.display='none';
   let wikiTried=false;
   const tryWiki=async()=>{
     if(wikiTried) return false;
@@ -426,11 +428,16 @@ async function loadPoster(img,f){
   };
   if(f.img){img.src=f.img;return;}
   if(!(await tryWiki())) img.src=posterPlaceholder(f.name);
+  img.onerror=()=>{
+    img.onerror=null;
+    img.style.display='none';
+    if(fallback) fallback.style.display='flex';
+  };
 }
 function posterHTML(f,cls=''){
   return `<img class="${cls}" alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}" onerror="loadPoster(this,${JSON.stringify(f).replace(/</g,'\u003c')})">`;
 }
-function renderAuction(){const f=state.film; $('itemTypeLabel').textContent=state.category==='celebrities'?'المشهور':'الفيلم';$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year||''}</span><span class="tag">${f.genre||'مشهور عالمي'}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`${posterHTML(f)}<div class="fallback">${esc(f.name)}</div>`;const first=$('poster').querySelector('img');loadPoster(first,f);$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
+function renderAuction(){const f=state.film; $('itemTypeLabel').textContent=state.category==='celebrities'?'المشهور':'الفيلم';$('roundNo').textContent=state.round+' / '+state.rounds;$('itemTitle').textContent=f.name;$('tags').innerHTML=`<span class="tag">${f.year||''}</span><span class="tag">${f.genre||'مشهور عالمي'}</span>`;$('rarity').innerHTML=`الندرة: <span class="${f.rarityClass}">${f.rarity}</span>`;$('poster').innerHTML=`${posterHTML(f)}<div class="fallback" style="display:none">${esc(f.name)}</div>`;const first=$('poster').querySelector('img');loadPoster(first,f);$('price').textContent=state.highest+' د.ك';const cur=state.players[state.current];const lead=state.leader>=0?state.players[state.leader]:null;$('turn').textContent=cur?`دور: ${cur.name}${lead?` | أعلى مزايد: ${lead.name} — ${state.highest} د.ك`:''}`:'';$('phaseLabel').textContent='المزاد';$('players').innerHTML=state.players.map((p,i)=>`<div class="player ${i===state.current?'turn':''} ${i===state.leader?'leader':''} ${!p.active?'out':''}"><b>${esc(p.name)}</b><br>المحفظة: ${p.balance} د.ك<br>الأفلام: ${p.films.length}<br><span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span></div>`).join('');$('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';const mine=state.players.find(p=>p.id===socket.id);const myTurn=mine&&state.players[state.current].id===socket.id;const canBid=myTurn&&mine.active&&state.leader!==state.current;document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);$('worth').disabled=!myTurn||state.leader===state.current||!mine.active;startCountdown();}
 function startCountdown(){clearInterval(localTimer);let end=state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
 function bid(v){socket.emit('bid',{room,value:v});}
 document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
