@@ -6,3 +6,10 @@ services:
     startCommand: npm start
     healthCheckPath: /
     plan: free
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: NODE_ENV
+        value: production
