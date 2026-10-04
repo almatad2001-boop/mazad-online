@@ -275,7 +275,7 @@ const celebrities = [
   {id:'actor-176',name:"Winona Ryder",year:2026,rating:8.6,baseValue:350,genre:'ممثل عالمي',rarity:'مميز',rarityClass:'special',img:'',fame:74,awards:6}
 ];
 const rooms=new Map(); function code(){let s;do{s='MZ'+Math.floor(1000+Math.random()*9000)}while(rooms.has(s));return s}
-function pub(r){return {phase:r.phase,category:r.category,players:r.players.map(p=>({id:p.id,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked,finalHistory:r.finalHistory||[]}};
+function pub(r){return {phase:r.phase,category:r.category,players:r.players.map(p=>({id:p.id,userId:p.userId,name:p.name,balance:p.balance,spent:p.spent,films:p.films,active:p.active,selectedFilmId:p.selectedFilmId})),round:r.round,rounds:r.rounds,film:r.film?{...r.film,value:undefined}:null,highest:r.highest,leader:r.leader,current:r.current,turnEndsAt:r.turnEndsAt,history:r.history,selectionTurnId:r.selectionTurnId,finalRanked:r.finalRanked,finalHistory:r.finalHistory||[]}};
 function broadcast(r){io.to(r.room).emit('state',pub(r));}
 function getR(s){return rooms.get(s.room)}
 function startAuction(r){if(r.round>=r.rounds){r.phase='selection';r.selectionTurnId=r.players.find(p=>p.films.length)?.id||null;r.players.forEach(p=>p.selectedFilmId=null);broadcast(r);return}const f={...r.pool[r.round++]};f.value=Math.max(30,Math.round(f.baseValue*(0.82+Math.random()*0.36)/10)*10);r.film=f;r.highest=0;r.leader=-1;r.players.forEach(p=>p.active=true);r.current=0;r.turnEndsAt=Date.now()+15000;broadcast(r);setTimeout(()=>turnTimeout(r.room),15050)}
@@ -296,29 +296,32 @@ async function saveGameResults(r){
 }
 
 io.use(async(socket,next)=>{
-  try{if(!supabase)return next(new Error('accounts_not_configured'));const token=parseCookies(socket.handshake.headers.cookie||'').mazad_session;if(!token)return next(new Error('login_required'));const {data,error}=await supabase.from('sessions').select('user_id,expires_at,users(id,username)').eq('token_hash',tokenHash(token)).maybeSingle();if(error||!data||new Date(data.expires_at)<=new Date())return next(new Error('login_required'));socket.user=data.users;next();}catch(e){next(new Error('auth_failed'));}
+  try{if(!supabase)return next(new Error('accounts_not_configured'));const token=parseCookies(socket.handshake.headers.cookie||'').mazad_session;if(!token)return next(new Error('login_required'));const {data,error}=await supabase.from('sessions').select('user_id,expires_at,users(id,username)').eq('token_hash',tokenHash(token)).maybeSingle();if(error||!data||new Date(data.expires_at)<=new Date())return next(new Error('login_required'));const u=Array.isArray(data.users)?data.users[0]:data.users;if(!u?.id)return next(new Error('login_required'));socket.user=u;next();}catch(e){next(new Error('auth_failed'));}
 });
 io.on('connection',socket=>{socket.on('createRoom',d=>{const category=d.category==='celebrities'?'celebrities':'films';const source=category==='celebrities'?celebrities:films;const r={room:code(),phase:'lobby',category,hostId:socket.id,budget:Math.max(20,+d.budget||500),playerCount:Math.min(6,Math.max(2,+d.playerCount||4)),rounds:Math.min(source.length,Math.min(100,Math.max(2,Math.floor(+d.rounds||8)))),players:[{id:socket.id,userId:socket.user.id,name:socket.user.username,balance:0,spent:0,films:[],active:true}],pool:[],round:0,history:[],gameId:crypto.randomUUID(),resultsSaved:false};r.players[0].balance=r.budget;rooms.set(r.room,r);socket.join(r.room);socket.emit('roomCreated',{room:r.room,state:pub(r)})});
 socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');r.players.push({id:socket.id,userId:socket.user.id,name:socket.user.username,balance:r.budget,spent:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
 socket.on('startGame',d=>{const r=getR(d);if(!r||socket.id!==r.hostId||r.phase!=='lobby')return;if(r.players.length<2)return socket.emit('errorMsg','يجب دخول لاعبين على الأقل.');const source=r.category==='celebrities'?celebrities:films;r.pool=source.slice().sort(()=>Math.random()-.5).slice(0,r.rounds);r.phase='auction';r.round=0;startAuction(r)});
 socket.on('bid',d=>{
-  const r=getR(d);
-  if(!r) return socket.emit('errorMsg','الغرفة غير موجودة أو انتهت.');
-  if(r.phase!=='auction') return socket.emit('errorMsg','المزاد ليس في مرحلة المزايدة الآن.');
-  const current=r.players[r.current];
-  if(!current) return socket.emit('errorMsg','لا يوجد دور مزايدة حالي.');
-  if(current.userId!==socket.user?.id) return socket.emit('errorMsg','ليس دورك الآن — انتظر حتى يظهر دورك.');
-  if(r.current===r.leader) return socket.emit('errorMsg','أنت أعلى مزايد حاليًا ولا يمكنك المزايدة على نفسك.');
-  if(!current.active) return socket.emit('errorMsg','لقد انسحبت من هذه الجولة.');
-  const v=Number(d.value);
-  if(!Number.isInteger(v)||v<10||v>500||v%10!==0) return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');
-  const np=r.highest+v;
-  if(np>current.balance) return socket.emit('errorMsg',`رصيدك لا يكفي. المطلوب ${np} د.ك، ورصيدك ${current.balance} د.ك.`);
-  r.leader=r.current;
-  r.highest=np;
-  r.current=nextActive(r,r.current);
-  socket.emit('bidAccepted',{amount:np});
-  if(r.current<0) sell(r); else { restartTimer(r); broadcast(r); }
+  try{
+    const r=getR(d);
+    if(!r) return socket.emit('errorMsg','الغرفة غير موجودة أو انتهت.');
+    if(r.phase!=='auction') return socket.emit('errorMsg','المزاد ليس في مرحلة المزايدة الآن.');
+    const current=r.players[r.current];
+    if(!current) return socket.emit('errorMsg','لا يوجد دور مزايدة حالي.');
+    if(!socket.user?.id) return socket.emit('errorMsg','انتهت جلسة الحساب. سجّل الدخول من جديد.');
+    if(String(current.userId)!==String(socket.user.id)) return socket.emit('errorMsg','ليس دورك الآن — انتظر حتى يظهر دورك.');
+    if(r.current===r.leader) return socket.emit('errorMsg','أنت أعلى مزايد حاليًا ولا يمكنك المزايدة على نفسك.');
+    if(!current.active) return socket.emit('errorMsg','لقد انسحبت من هذه الجولة.');
+    const v=Number(d?.value);
+    if(!Number.isInteger(v)||v<10||v>500||v%10!==0) return socket.emit('errorMsg','المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');
+    const np=r.highest+v;
+    if(np>current.balance) return socket.emit('errorMsg',`رصيدك لا يكفي. المطلوب ${np} د.ك، ورصيدك ${current.balance} د.ك.`);
+    r.leader=r.current;
+    r.highest=np;
+    r.current=nextActive(r,r.current);
+    socket.emit('bidAccepted',{amount:np});
+    if(r.current<0) sell(r); else { restartTimer(r); broadcast(r); }
+  }catch(e){console.error('bid handler failed',e);socket.emit('errorMsg','حدث خطأ أثناء المزايدة. حاول مرة أخرى.');}
 });
 socket.on('withdraw',d=>{const r=getR(d);if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');const p=r.players.find(x=>x.userId===socket.user?.id);if(!p)return socket.emit('errorMsg','لم يتم العثور على لاعبك في هذه الغرفة.');actionWithdraw(r,p.id)});
 socket.on('selectFilm',d=>{const r=getR(d);if(!r||r.phase!=='selection'||r.selectionTurnId!==socket.id)return;const p=r.players.find(x=>x.id===socket.id);const f=p?.films?.[+d.index];if(!f)return;p.selectedFilmId=f.id||`${p.id}-${d.index}-${f.name}`;r.selectionTurnId=r.players.find(x=>x.films.length&&!x.selectedFilmId)?.id||null;if(!r.selectionTurnId)void makeFinal(r);else broadcast(r)});
