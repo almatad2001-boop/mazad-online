@@ -394,7 +394,8 @@ function connectSocket(){
  if(typeof io!=='function'){setStatus('تعذر تحميل Socket.IO.');return;}
  socket=io({transports:['websocket','polling']});
  socket.on('connect',()=>{setStatus('متصل بالسيرفر ✓',true);$('create').disabled=false;$('join').disabled=false;});
- socket.on('connect_error',()=>{setStatus('تعذر الاتصال بالحساب أو السيرفر. سجّل الدخول ثم أعد المحاولة.');$('create').disabled=true;$('join').disabled=true;});
+ socket.on('connect_error',e=>{setStatus('تعذر الاتصال بالسيرفر: '+(e?.message||'خطأ اتصال'));$('create').disabled=true;$('join').disabled=true;});
+ socket.on('bidAccepted',d=>{setStatus('تمت المزايدة ✓ — أعلى سعر الآن '+d.amount+' د.ك',true);});
  socket.on('disconnect',()=>{setStatus('انقطع الاتصال بالسيرفر.');});
  socket.on('roomCreated',d=>{room=d.room;isHost=true;enterRoom(d.state);});
  socket.on('joined',d=>{room=d.room;isHost=false;enterRoom(d.state);});
@@ -422,23 +423,6 @@ $('join').onclick=()=>{if(!socket||!socket.connected){setStatus('السيرفر 
 $('startGame').onclick=()=>socket.emit('startGame',{room});
 $('copyCode').onclick=async()=>{const value=$('code').textContent.trim();try{await navigator.clipboard.writeText(value);$('copyMsg').textContent='تم نسخ الكود ✓';}catch(e){$('shareCode').focus();$('shareCode').select();document.execCommand('copy');$('copyMsg').textContent='تم نسخ الكود ✓';}setTimeout(()=>$('copyMsg').textContent='',1800);};
 function enterRoom(s){state=s;show('lobby');$('lobbyForms').classList.add('hidden');$('roomInfo').classList.remove('hidden');$('code').textContent=room;$('shareCode').value=room;$('playerCountNow').textContent=`${s.players.length} / ${s.players.length?s.players.length:4}`;$('roomPlayers').innerHTML=s.players.map((p,i)=>`<div class="player"><b>${esc(p.name)}</b>${i===0?' 👑 المضيف':''}<br><span class="status in">متصل</span></div>`).join('');$('hostHint').textContent=isHost?'أنت المضيف. أرسل الكود لأصدقائك، ثم اضغط «ابدأ المزاد».':'تم دخول الغرفة. أرسل اسمك وانتظر المضيف لبدء اللعبة.';$('startGame').classList.toggle('hidden',!isHost);}
-socket.on('state',s=>{
-  state=s;
-  if(s && s.phase==='auction'){
-    clearInterval(localTimer);
-  }
-  renderState();
-});
-socket.on('roundStarted',d=>{
-  clearInterval(localTimer);
-  show('game');
-  if(state){
-    state.phase='auction';
-    state.turnEndsAt=d.turnEndsAt;
-    renderAuction();
-  }
-});
-socket.on('disconnectedPlayer',name=>alert(name+' خرج من الغرفة.'));
 function renderState(){
 if(!state)return;
 $('gameCode').textContent=room;
@@ -503,7 +487,7 @@ function renderAuction(){
  const first=$('poster').querySelector('img');loadPoster(first,f);
  $('price').textContent=state.phase==='secret'?'مزاد سري':' '+state.highest+' د.ك';
  const ev=state.currentEvent||{name:'جولة عادية',desc:'لا يوجد تأثير خاص.'};
- $('turn').innerHTML=`${state.phase==='secret'?'🔒 مزاد سري — ضع عرضك السري':'دور: '+(state.players[state.current]?.name||'')}${state.phase==='auction'&&state.leader>=0?' | أعلى مزايد: '+state.players[state.leader].name+' — '+state.highest+' د.ك':''}`;
+ $('turn').innerHTML=`${state.phase==='secret'?'🔒 مزاد سري — ضع عرضك السري':'دور: '+(state.players[state.current]?.name||'')+(state.players[state.current]?.id===socket.id?' — دورك الآن':' — انتظر دورك')}${state.phase==='auction'&&state.leader>=0?' | أعلى مزايد: '+state.players[state.leader].name+' — '+state.highest+' د.ك':''}`;
  $('phaseLabel').textContent=state.phase==='secret'?'مزاد سري 🔒':'المزاد';
  let evbox=document.getElementById('eventBox'); if(!evbox){evbox=document.createElement('div');evbox.id='eventBox';evbox.className='event-box';$('turn').after(evbox)}
  evbox.innerHTML=`🎲 <b>${esc(ev.name)}</b><br><span>${esc(ev.desc)}</span>`;
@@ -512,27 +496,37 @@ function renderAuction(){
  <span class="status ${i===state.leader?'lead':p.active?'in':'out'}">${i===state.leader?'أعلى مزايد — ينتظر':p.active?'داخل المزاد':'يستاهل — انسحب'}</span>
  ${p.frozenUntil&&p.frozenUntil>Date.now()?'<br><span class="status out">🛑 مجمّد</span>':''}</div>`).join('');
  $('log').innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<div class="logrow"><span>🎬 ${esc(x.film)}</span><b>${esc(x.player)}</b><span>${x.price} د.ك</span></div>`).join(''):'لا توجد مشتريات بعد.';
- const mine=state.players.find(p=>p.id===socket.id); if(!mine)return;
- ['double','freeze','reveal'].forEach(t=>{const el=$(t==='double'?'doubleCount':t==='freeze'?'freezeCount':'revealCount');if(el)el.textContent=mine.cards?.[t]??0});
- const myIdx=state.players.findIndex(p=>p.id===socket.id);
- const myTurn=state.phase==='auction'&&myIdx===state.current;
- const canBid=state.phase==='auction'&&myTurn&&mine.active&&state.leader!==state.current&&(!mine.frozenUntil||mine.frozenUntil<=Date.now());
- document.querySelectorAll('[data-inc],#customBtn').forEach(b=>b.disabled=!canBid);
- $('worth').disabled=!myTurn||state.leader===state.current||!mine.active;
- $('cardDouble').disabled=!(canBid&&mine.cards?.double>0);
- $('cardReveal').disabled=!(mine.cards?.reveal>0);
- $('cardFreeze').disabled=!(mine.cards?.freeze>0&&state.players.some((p,i)=>i!==myIdx&&p.active));
- if(state.phase==='secret'){
-   document.querySelectorAll('[data-inc],#customBtn,#worth,#cardDouble,#cardFreeze,#cardReveal').forEach(b=>b.disabled=true);
- }
+ const mine=state.players.find(p=>p.userId===currentUser?.id || p.id===socket?.id); if(!mine)return;
+ ['double','freeze','reveal'].forEach(t=>{const el=$(t==='double'?'doubleCount':t==='freeze'?'freezeCount':'revealCount');if(el)el.textContent=mine.cards?.[t]??1});
+ const myIdx=state.players.findIndex(p=>p.userId===currentUser?.id || p.id===socket?.id);
+ const auctionActive=state.phase==='auction' && !!socket?.connected;
+ // السيرفر هو صاحب القرار في الدور؛ لا نعطّل أزرار المزايدة محليًا بسبب socket.id.
+ document.querySelectorAll('[data-inc],#customBtn,#worth').forEach(b=>b.disabled=!auctionActive);
+ $('cardDouble').disabled=!(auctionActive&&mine.cards?.double>0);
+ $('cardReveal').disabled=!(auctionActive&&mine.cards?.reveal>0);
+ $('cardFreeze').disabled=!(auctionActive&&mine.cards?.freeze>0&&state.players.some((p,i)=>i!==myIdx&&p.active));
+ if(state.phase==='secret') document.querySelectorAll('[data-inc],#customBtn,#worth,#cardDouble,#cardFreeze,#cardReveal').forEach(b=>b.disabled=true);
  startCountdown();
 }
 function startCountdown(){clearInterval(localTimer);let end=state.phase==='secret'?state.secretEndsAt:state.turnEndsAt;if(!end)return;function tick(){const left=Math.max(0,Math.ceil((end-Date.now())/1000));$('timer').textContent=left;if(left<=0)clearInterval(localTimer)}tick();localTimer=setInterval(tick,250)}
-function bid(v){socket.emit('bid',{room,value:v});}
-document.querySelectorAll('[data-inc]').forEach(b=>b.onclick=()=>bid(+b.dataset.inc));$('customBtn').onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){alert('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};$('worth').onclick=()=>socket.emit('withdraw',{room});
+function bid(v){
+ if(!socket||!socket.connected){setStatus('لا يوجد اتصال بالسيرفر. أعد تحميل الصفحة.');return;}
+ if(!state||state.phase!=='auction'){setStatus('المزاد غير نشط الآن.');return;}
+ const value=Number(v);
+ if(!Number.isInteger(value)||value<10||value>500||value%10!==0){setStatus('المزايدة يجب أن تكون من 10 إلى 500 وبمضاعفات 10.');return;}
+ setStatus('جاري إرسال المزايدة…');
+ socket.emit('bid',{room,value});
+}
+function withdraw(){if(!socket||!socket.connected){setStatus('لا يوجد اتصال بالسيرفر.');return;}setStatus('جاري الانسحاب…');socket.emit('withdraw',{room});}
+function bindAuctionControls(){
+ document.querySelectorAll('[data-inc]').forEach(b=>{b.onclick=()=>bid(+b.dataset.inc)});
+ const cb=$('customBtn');if(cb)cb.onclick=()=>{const v=+$('custom').value;if(!Number.isInteger(v)||v<10||v>500||v%10!==0){setStatus('اكتب رقمًا من 10 إلى 500 ومن مضاعفات 10.');return}bid(v);$('custom').value=''};
+ const wb=$('worth');if(wb)wb.onclick=withdraw;
+}
+bindAuctionControls();
 $('cardDouble').onclick=()=>socket.emit('useCard',{room,type:'double'});
 $('cardReveal').onclick=()=>socket.emit('useCard',{room,type:'reveal'});
-$('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.players.findIndex(x=>x.id===socket.id)?'':i+1+'. '+p.name}`).filter(Boolean).join('\n');const pick=prompt('اكتب رقم اللاعب الذي تريد تجميده:\n'+names);const idx=Number(pick)-1;if(Number.isInteger(idx))socket.emit('useCard',{room,type:'freeze',target:idx});};
+$('cardFreeze').onclick=()=>{const names=state.players.map((p,i)=>`${i===state.players.findIndex(x=>x.name===currentUser?.username)?'':i+1+'. '+p.name}`).filter(Boolean).join('\n');const pick=prompt('اكتب رقم اللاعب الذي تريد تجميده:\n'+names);const idx=Number(pick)-1;if(Number.isInteger(idx))socket.emit('useCard',{room,type:'freeze',target:idx});};
 function renderSelection(){const p=state.players.find(x=>x.id===socket.id);$('phaseLabel').textContent='اختيار المواجهة';$('selectionPlayer').textContent=state.selectionTurnId===socket.id?'دورك — اختر فيلمًا واحدًا فقط':'اختر لاعبًا ينتظر الاختيار';if(p&&!p.selectedFilmId){$('selectionMovies').innerHTML=p.films.map((f,i)=>`<div class="mini"><img alt="${esc(f.name)}" src="${f.img||posterPlaceholder(f.name)}"><div><b>${esc(f.name)}</b><br>⭐ ${f.rating}<br><span class="muted">اشتريته بـ ${f.price} د.ك</span><button class="pick-btn" data-pick="${i}">اختيار هذا الفيلم</button></div></div>`).join('');p.films.forEach((f,i)=>{const img=$('selectionMovies').querySelectorAll('img')[i];if(img)loadPoster(img,f);});document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>socket.emit('selectFilm',{room,index:+b.dataset.pick}));}else{$('selectionMovies').innerHTML='<p class="muted">تم اختيار فيلمك. انتظر بقية اللاعبين...</p>';}$('selectionWait').textContent=`اختيارات مكتملة: ${state.players.filter(p=>p.selectedFilmId).length} / ${state.players.length}`;}
 function renderFinal(){saveFinalResults();renderSavedResults();
 const ranked=state.finalRanked||[];
