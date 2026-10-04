@@ -295,11 +295,58 @@ async function saveGameResults(r){
   if(rows.length){const {error}=await supabase.from('game_results').insert(rows);if(error){r.resultsSaved=false;console.error('game_results insert failed',error);}}
 }
 
+
+function selectionForUser(r,userId,index){
+  if(!r) return {ok:false,error:'الغرفة غير موجودة أو انتهت.'};
+  if(r.phase!=='selection') return {ok:false,error:'مرحلة اختيار المواجهة لم تبدأ بعد.'};
+  const uid=String(userId||'');
+  if(!uid) return {ok:false,error:'انتهت جلسة الحساب. سجّل الدخول من جديد.'};
+  const matches=r.players.filter(x=>String(x.userId)===uid);
+  if(matches.length>1) return {ok:false,error:'هذا الحساب مستخدم لأكثر من لاعب في الغرفة. استخدم حسابًا مختلفًا لكل لاعب.'};
+  const p=matches[0];
+  if(!p) return {ok:false,error:'لم يتم العثور على لاعبك في الغرفة. أعد الدخول للغرفة.'};
+  const turnOk=(r.selectionTurnUserId && String(r.selectionTurnUserId)===String(p.userId)) || (r.selectionTurnId && String(r.selectionTurnId)===String(p.id));
+  if(!turnOk) return {ok:false,error:'ليس دورك لاختيار الفيلم الآن.'};
+  const idx=Number(index);
+  if(!Number.isInteger(idx)) return {ok:false,error:'اختيار غير صالح.'};
+  const f=p.films?.[idx];
+  if(!f) return {ok:false,error:'الفيلم المختار غير موجود.'};
+  if(p.selectedFilmId) return {ok:false,error:'لقد اخترت فيلمًا بالفعل.'};
+  p.selectedFilmId=f.id||`${p.userId}-${idx}-${f.name}`;
+  const next=r.players.find(x=>x.films.length&&!x.selectedFilmId);
+  r.selectionTurnId=next?.id||null;
+  r.selectionTurnUserId=next?.userId||null;
+  return {ok:true,film:f.name,nextUserId:next?.userId||null,finished:!next};
+}
+
+// Mobile-safe HTTP fallback for the final movie selection.
+// This avoids relying on a Socket.IO acknowledgement callback on some mobile browsers.
+app.post('/api/game/select-film',async(req,res)=>{
+  try{
+    if(!authReady(res))return;
+    const user=await userFromRequest(req);
+    if(!user)return res.status(401).json({ok:false,error:'انتهت جلسة الحساب. سجّل الدخول من جديد.'});
+    const roomCode=String(req.body?.room||'').trim().toUpperCase();
+    const r=rooms.get(roomCode);
+    const result=selectionForUser(r,user.id,req.body?.index);
+    if(!result.ok)return res.status(400).json(result);
+    if(result.finished){
+      await makeFinal(r);
+    }else{
+      broadcast(r);
+    }
+    return res.json({ok:true,film:result.film,finished:result.finished});
+  }catch(e){
+    console.error('HTTP select-film failed',e);
+    return res.status(500).json({ok:false,error:'حدث خطأ أثناء اختيار الفيلم. حاول مرة أخرى.'});
+  }
+});
+
 io.use(async(socket,next)=>{
   try{if(!supabase)return next(new Error('accounts_not_configured'));const token=parseCookies(socket.handshake.headers.cookie||'').mazad_session;if(!token)return next(new Error('login_required'));const {data,error}=await supabase.from('sessions').select('user_id,expires_at,users(id,username)').eq('token_hash',tokenHash(token)).maybeSingle();if(error||!data||new Date(data.expires_at)<=new Date())return next(new Error('login_required'));const u=Array.isArray(data.users)?data.users[0]:data.users;if(!u?.id)return next(new Error('login_required'));socket.user=u;next();}catch(e){next(new Error('auth_failed'));}
 });
 io.on('connection',socket=>{socket.on('createRoom',d=>{const category=d.category==='celebrities'?'celebrities':'films';const source=category==='celebrities'?celebrities:films;const r={room:code(),phase:'lobby',category,hostId:socket.id,budget:Math.max(20,+d.budget||500),playerCount:Math.min(6,Math.max(2,+d.playerCount||4)),rounds:Math.min(source.length,Math.min(100,Math.max(2,Math.floor(+d.rounds||8)))),players:[{id:socket.id,userId:socket.user.id,name:socket.user.username,balance:0,spent:0,films:[],active:true}],pool:[],round:0,history:[],gameId:crypto.randomUUID(),resultsSaved:false};r.players[0].balance=r.budget;rooms.set(r.room,r);socket.join(r.room);socket.emit('roomCreated',{room:r.room,state:pub(r)})});
-socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');r.players.push({id:socket.id,userId:socket.user.id,name:socket.user.username,balance:r.budget,spent:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
+socket.on('joinRoom',d=>{const r=rooms.get(String(d.room||'').toUpperCase());if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');if(r.phase!=='lobby')return socket.emit('errorMsg','اللعبة بدأت بالفعل.');if(r.players.length>=r.playerCount)return socket.emit('errorMsg','الغرفة ممتلئة.');if(r.players.some(p=>String(p.userId)===String(socket.user.id)))return socket.emit('errorMsg','هذا الحساب موجود بالفعل في الغرفة. استخدم حسابًا مختلفًا لكل لاعب.');r.players.push({id:socket.id,userId:socket.user.id,name:socket.user.username,balance:r.budget,spent:0,films:[],active:true});socket.join(r.room);socket.emit('joined',{room:r.room,state:pub(r)});broadcast(r)});
 socket.on('startGame',d=>{const r=getR(d);if(!r||socket.id!==r.hostId||r.phase!=='lobby')return;if(r.players.length<2)return socket.emit('errorMsg','يجب دخول لاعبين على الأقل.');const source=r.category==='celebrities'?celebrities:films;r.pool=source.slice().sort(()=>Math.random()-.5).slice(0,r.rounds);r.phase='auction';r.round=0;startAuction(r)});
 socket.on('bid',d=>{
   try{
@@ -325,28 +372,19 @@ socket.on('bid',d=>{
 });
 socket.on('withdraw',d=>{const r=getR(d);if(!r)return socket.emit('errorMsg','الغرفة غير موجودة.');const p=r.players.find(x=>x.userId===socket.user?.id);if(!p)return socket.emit('errorMsg','لم يتم العثور على لاعبك في هذه الغرفة.');actionWithdraw(r,p.id)});
 socket.on('selectFilm',(d,ack)=>{
-  const reply=(ok,payload)=>{try{if(typeof ack==='function')ack({ok,...payload});}catch(e){}};
+  const reply=(payload)=>{try{if(typeof ack==='function')ack(payload);}catch(e){}}
   try{
-    const r=getR(d);
-    if(!r) return reply(false,{error:'الغرفة غير موجودة أو انتهت.'});
-    if(r.phase!=='selection') return reply(false,{error:'مرحلة اختيار المواجهة لم تبدأ بعد.'});
-    const p=r.players.find(x=>String(x.id)===String(socket.id) || (socket.user?.id && String(x.userId)===String(socket.user.id)));
-    if(!p) return reply(false,{error:'لم يتم العثور على لاعبك في الغرفة. أعد دخول الغرفة.'});
-    const turnOk=(r.selectionTurnId && String(r.selectionTurnId)===String(p.id)) || (r.selectionTurnUserId && String(r.selectionTurnUserId)===String(p.userId));
-    if(!turnOk) return reply(false,{error:'ليس دورك لاختيار الفيلم الآن.'});
-    const idx=Number(d?.index);
-    if(!Number.isInteger(idx)) return reply(false,{error:'اختيار غير صالح.'});
-    const f=p.films?.[idx];
-    if(!f) return reply(false,{error:'الفيلم المختار غير موجود.'});
-    if(p.selectedFilmId) return reply(false,{error:'لقد اخترت فيلمًا بالفعل.'});
-    p.selectedFilmId=f.id||`${p.userId}-${idx}-${f.name}`;
-    const next=r.players.find(x=>x.films.length&&!x.selectedFilmId);
-    r.selectionTurnId=next?.id||null;
-    r.selectionTurnUserId=next?.userId||null;
-    reply(true,{film:f.name});
-    socket.emit('selectionAccepted',{film:f.name});
-    if(!next) void makeFinal(r); else broadcast(r);
-  }catch(e){console.error('selectFilm handler failed',e);reply(false,{error:'حدث خطأ أثناء اختيار الفيلم. حاول مرة أخرى.'});}
+    const result=selectionForUser(getR(d),socket.user?.id,d?.index);
+    if(!result.ok){socket.emit('selectionError',{error:result.error});return reply({ok:false,error:result.error});}
+    socket.emit('selectionAccepted',{film:result.film,finished:result.finished});
+    if(result.finished) void makeFinal(getR(d)); else broadcast(getR(d));
+    reply({ok:true,film:result.film,finished:result.finished});
+  }catch(e){
+    console.error('selectFilm handler failed',e);
+    const error='حدث خطأ أثناء اختيار الفيلم. حاول مرة أخرى.';
+    socket.emit('selectionError',{error});
+    reply({ok:false,error});
+  }
 });
 socket.on('disconnect',()=>{for(const r of rooms.values()){const i=r.players.findIndex(p=>p.id===socket.id);if(i>=0&&r.phase!=='final'){const name=r.players[i].name;r.players.splice(i,1);if(r.players.length<2){r.phase='lobby'}if(r.hostId===socket.id&&r.players[0])r.hostId=r.players[0].id;broadcast(r);io.to(r.room).emit('disconnectedPlayer',name);}}});});
 const PORT=process.env.PORT||3000;server.listen(PORT,'0.0.0.0',()=>console.log(`Mazad Online running on http://localhost:${PORT}`));
